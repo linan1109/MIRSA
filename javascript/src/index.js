@@ -87,9 +87,16 @@ const globalXaxisContainer = document.getElementById('global-xaxis-container');
 const globalHeatmapSelection = document.getElementById(
     'global-heatmap-selection',
 );
-const globalHeatmapGroupBySelection = document.getElementById(
-    'global-group-selection',
+const globalPlotSelectionMetric = document.getElementById(
+    'global-plot-selection-metric',
 );
+const globalPlotSelectionGroupBy = document.getElementById(
+    'global-plot-selection-groupby',
+);
+const globalPlotSelectionPlot = document.getElementById(
+    'global-plot-selection-plot',
+);
+
 const onlyObsSelect = document.getElementById('only-obs-select');
 const sliderPlotsPart = document.getElementById('slider-plots-part');
 const PlotsPart = document.getElementById('plots-part');
@@ -786,8 +793,7 @@ const loadMovementFromCSV = (robotNum) => {
 
         // add new robot option to global heatmap selection
         if (
-            globalHeatmapGroupBySelection.value === 'LineRobot' ||
-            globalHeatmapGroupBySelection.value === 'HeatMapRobot'
+            globalPlotSelectionGroupBy.value === 'Robot'
         ) {
             addNewRobotOptionToGlobalHeatmapSelection(robotNum);
         }
@@ -995,23 +1001,27 @@ const changeGlobalPlotToHeatmapForceObs = (obsName) => {
 
 const changeGlobalPlot = (num, type = null) => {
     if (type === null) {
-        type = globalHeatmapGroupBySelection.value;
+        type =
+            globalPlotSelectionPlot.value +
+            globalPlotSelectionGroupBy.value +
+            globalPlotSelectionMetric.value;
     }
-    if (type === 'HeatMapRobot') {
+    console.log(type);
+    if (type === 'Heat MapRobotJoint Position') {
         changeGlobalPlotToHeatmapRobot(num);
-    } else if (type === 'LineRobot') {
+    } else if (type === 'Line ChartRobotJoint Position') {
         changeGlobalPlotToLineRobot(num);
-    } else if (type === 'HeatMapLink') {
+    } else if (type === 'Heat MapJointJoint Position') {
         changeGlobalPlotToHeatmapObs(num);
-    } else if (type === 'LineLink') {
+    } else if (type === 'Line ChartJointJoint Position') {
         changeGlobalPlotToLineObs(num);
-    } else if (type === 'HeatMapVeloRobot') {
+    } else if (type === 'Heat MapRobotJoint Velocity') {
         changeGlobalPlotToHeatmapVeloRobot(num);
-    } else if (type === 'HeatMapVeloLink') {
+    } else if (type === 'Heat MapJointJoint Velocity') {
         changeGlobalPlotToHeatmapVeloObs(num);
-    } else if (type === 'HeatMapForceRobot') {
+    } else if (type === 'Heat MapRobotJoint Torque') {
         changeGlobalPlotToHeatmapForceRobot(num);
-    } else if (type === 'HeatMapForceLink') {
+    } else if (type === 'Heat MapJointJoint Torque') {
         changeGlobalPlotToHeatmapForceObs(num);
     }
 };
@@ -1075,7 +1085,6 @@ const addHeatMapObsForceSVG = (obsName) => {
     svgList[obsName] = svg;
     svg.updatePlotOnTime();
 };
-
 
 const updateAllSVG = () => {
     for (const key in svgList) {
@@ -1260,78 +1269,64 @@ const globalHeatmapRedraw = () => {
     while (globalHeatmapSelection.firstChild) {
         globalHeatmapSelection.removeChild(globalHeatmapSelection.firstChild);
     }
-    if (globalHeatmapGroupBySelection.value === 'LineRobot') {
+    const option =
+        globalPlotSelectionPlot.value +
+        globalPlotSelectionGroupBy.value +
+        globalPlotSelectionMetric.value;
+
+    if (globalPlotSelectionGroupBy.value === 'Robot') {
+        // add options for robots
         for (const key in movementContainer.movementDict) {
             addNewRobotOptionToGlobalHeatmapSelection(key);
         }
-        // use the first robot to draw the global heatmap
         const firstOption = globalHeatmapSelection.options[0];
         globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'LineRobot');
-    } else if (globalHeatmapGroupBySelection.value === 'LineLink') {
+    } else if (globalPlotSelectionGroupBy.value === 'Joint') {
+        // add options for links
         for (const key in globalVariables.nameObsMap) {
             addNewObsOptionToGlobalHeatmapSelection(key);
         }
-
         const firstOption = globalHeatmapSelection.options[0];
         globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'LineLink');
-    } else if (globalHeatmapGroupBySelection.value === 'HeatMapRobot') {
-        for (const key in movementContainer.movementDict) {
-            addNewRobotOptionToGlobalHeatmapSelection(key);
-        }
-
-        const firstOption = globalHeatmapSelection.options[0];
-        globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'HeatMapRobot');
-    } else if (globalHeatmapGroupBySelection.value === 'HeatMapLink') {
-        for (const key in globalVariables.nameObsMap) {
-            addNewObsOptionToGlobalHeatmapSelection(key);
-        }
-
-        const firstOption = globalHeatmapSelection.options[0];
-        globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'HeatMapLink');
-    } else if (globalHeatmapGroupBySelection.value === 'HeatMapVeloRobot') {
-        for (const key in movementContainer.movementDict) {
-            addNewRobotOptionToGlobalHeatmapSelection(key);
-        }
-
-        const firstOption = globalHeatmapSelection.options[0];
-        globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'HeatMapVeloRobot');
-    } else if (globalHeatmapGroupBySelection.value === 'HeatMapVeloLink') {
-        for (const key in globalVariables.nameObsMap) {
-            addNewObsOptionToGlobalHeatmapSelection(key);
-        }
-
-        const firstOption = globalHeatmapSelection.options[0];
-        globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'HeatMapVeloLink');
-    } else if (globalHeatmapGroupBySelection.value === 'HeatMapForceRobot') {
-        for (const key in movementContainer.movementDict) {
-            addNewRobotOptionToGlobalHeatmapSelection(key);
-        }
-
-        const firstOption = globalHeatmapSelection.options[0];
-        globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'HeatMapForceRobot');
-    } else if (globalHeatmapGroupBySelection.value === 'HeatMapForceLink') {
-        for (const key in globalVariables.nameObsMap) {
-            addNewObsOptionToGlobalHeatmapSelection(key);
-        }
-
-        const firstOption = globalHeatmapSelection.options[0];
-        globalHeatmapSelection.value = firstOption.value;
-        changeGlobalPlot(firstOption.value, 'HeatMapForceLink');
     }
+    changeGlobalPlot(globalHeatmapSelection.value, option);
 };
 
 plotsGroupSelection.addEventListener('change', () => {
     plotsSVGRedraw();
 });
 
-globalHeatmapGroupBySelection.addEventListener('change', () => {
+const addSelectionToElement = (selectElement, option) => {
+    const optionElement = document.createElement('option');
+    optionElement.value = option;
+    optionElement.textContent = option;
+    selectElement.appendChild(optionElement);
+};
+
+globalPlotSelectionPlot.addEventListener('change', () => {
+    const value = globalPlotSelectionPlot.value;
+    const groupByOptions = Object.keys(globalVariables.globalPlotSelections[value]);
+    console.log(groupByOptions);
+    while (globalPlotSelectionGroupBy.firstChild) {
+        globalPlotSelectionGroupBy.removeChild(globalPlotSelectionGroupBy.firstChild);
+    }
+    for (const option of groupByOptions) {
+        addSelectionToElement(globalPlotSelectionGroupBy, option);
+    }
+    globalHeatmapRedraw();
+});
+globalPlotSelectionGroupBy.addEventListener('change', () => {
+    const value = globalPlotSelectionGroupBy.value;
+    const metricOptions = globalVariables.globalPlotSelections[globalPlotSelectionPlot.value][value];
+    while (globalPlotSelectionMetric.firstChild) {
+        globalPlotSelectionMetric.removeChild(globalPlotSelectionMetric.firstChild);
+    }
+    for (const option of metricOptions) {
+        addSelectionToElement(globalPlotSelectionMetric, option);
+    }
+    globalHeatmapRedraw();
+});
+globalPlotSelectionMetric.addEventListener('change', () => {
     globalHeatmapRedraw();
 });
 

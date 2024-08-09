@@ -60,6 +60,17 @@ const globalVariables = {
     rightSvgWindowSize: 400,
     lockBrush: false,
     brushStart: -200,
+
+    globalPlotSelections: {
+        'Line Chart': {
+            'Robot': ['Joint Position', 'Joint Velocity', 'Joint Torque', 'Reward'],
+            'Joint': ['Joint Position', 'Joint Velocity', 'Joint Torque'],
+        },
+        'Heat Map': {
+            'Robot': ['Joint Position', 'Joint Velocity', 'Joint Torque', 'Reward'],
+            'Joint': ['Joint Position', 'Joint Velocity', 'Joint Torque'],
+        },
+    },
 };
 
 export default globalVariables;

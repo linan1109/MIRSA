@@ -274,30 +274,29 @@
             <div id="global-plots-controls" style="padding-top: 5px">
                 <label>
                     Plots Option:&nbsp;&nbsp;
-                    <select id="global-group-selection">
-                        <option value="LineRobot" selected>
-                            Line Plot by Robot
-                        </option>
-                        <option value="LineLink">Line Plot by Joint</option>
-                        <option value="HeatMapRobot">Heat Map by Robot</option>
-                        <option value="HeatMapLink">Heat Map by Joint</option>
-                        <option value="HeatMapVeloRobot">
-                            Velocity by Robot
-                        </option>
-                        <option value="HeatMapVeloLink">
-                            Velocity by Joint
-                        </option>
-                        <option value="HeatMapForceRobot">
-                            Torque by Robot
-                        </option>
-                        <option value="HeatMapForceLink">
-                            Torque by Joint
-                        </option>
-                        
+                    <select id="global-plot-selection-plot">
+                        <option value="Line Chart">Line Chart</option>
+                        <option value="Heat Map">Heat Map</option>
+                    </select>
+                </label>
+                <label>
+                    Group By:&nbsp;&nbsp;
+                    <select id="global-plot-selection-groupby">
+                        <option value="Robot">Robot</option>
+                        <option value="Joint">Joint</option>
+                    </select>
+                </label>
+                <label>
+                    Metric:&nbsp;&nbsp;
+                    <select id="global-plot-selection-metric">
+                        <option value="Joint Position">Joint Position</option>
+                        <option value="Joint Velocity">Joint Velocity</option>
+                        <option value="Joint Torque">Joint Torque</option>
+                        <option value="Reward">Reward</option>
                     </select>
                 </label>
                 <label for="global-heatmap-selection">
-                    Select One: &nbsp;&nbsp;
+                    Select: &nbsp;&nbsp;
                     <select id="global-heatmap-selection"></select>
                 </label>
                 <div
