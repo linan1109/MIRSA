@@ -7,6 +7,10 @@ import GlobalHeatmapVelocityObs from './global-heatmap-velo-obs';
 
 import GlobalLineChartObs from './global-linechart-obs';
 import GlobalLineChartRobot from './global-linechart-robot';
+import GlobalLineChartObsVelo from './global-linechart-velo-obs';
+import GlobalLineChartObsForce from './global-linechart-force-obs';
+import GlobalLineChartRobotVelo from './global-linechart-velo-robot';
+import GlobalLineChartRobotForce from './global-linechart-force-robot';
 
 import GlobalXAxis from './global-x-axis';
 
@@ -19,5 +23,9 @@ export {
     GlobalHeatmapVelocityObs,
     GlobalLineChartObs,
     GlobalLineChartRobot,
+    GlobalLineChartObsVelo,
+    GlobalLineChartObsForce,
+    GlobalLineChartRobotVelo,
+    GlobalLineChartRobotForce,
     GlobalXAxis,
 };

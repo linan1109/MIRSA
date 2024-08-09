@@ -7,6 +7,10 @@ import SmallHeatmapRobotVelo from './small-heatmap-robot-velo';
 
 import SmallLineChartObs from './small-linechart-obs';
 import SmallLineChartRobot from './small-linechart-robot';
+import SmallLineChartObsVelo from './small-linechart-velo-obs';
+import SmallLineChartObsForce from './small-linechart-force-obs';
+import SmallLineChartRobotVelo from './small-linechart-velo-robot';
+import SmallLineChartRobotForce from './small-linechart-force-robot';
 
 export {
     SmallHeatmapObs,
@@ -17,4 +21,8 @@ export {
     SmallHeatmapRobotVelo,
     SmallLineChartObs,
     SmallLineChartRobot,
+    SmallLineChartObsVelo,
+    SmallLineChartObsForce,
+    SmallLineChartRobotVelo,
+    SmallLineChartRobotForce
 };
