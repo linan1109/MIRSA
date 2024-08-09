@@ -1106,7 +1106,6 @@ const changeGlobalPlot = (num, type = null) => {
             globalPlotSelectionGroupBy.value +
             globalPlotSelectionMetric.value;
     }
-    console.log(type);
     if (type === 'Heat MapRobotJoint Position') {
         changeGlobalPlotToHeatmapRobot(num);
     } else if (type === 'Line ChartRobotJoint Position') {
@@ -1462,7 +1461,6 @@ globalPlotSelectionPlot.addEventListener('change', () => {
     const groupByOptions = Object.keys(
         globalVariables.globalPlotSelections[value],
     );
-    console.log(groupByOptions);
     while (globalPlotSelectionGroupBy.firstChild) {
         globalPlotSelectionGroupBy.removeChild(
             globalPlotSelectionGroupBy.firstChild,
@@ -1624,8 +1622,9 @@ const updateAnymal = () => {
 
     for (const robotNum of movementContainer.robotNums) {
         if (!movementContainer.hasMovement(robotNum)) continue;
-        const movement = movementContainer.getMovement(robotNum);
-        var mov = movement[current];
+        // const movement = movementContainer.getMovement(robotNum);
+        // var mov = movement[current];
+        const mov = movementContainer.getCertainMovement(robotNum, current);
         if (mov === undefined) {
             globalTimer.stop();
             for (let i = 0; i < names.length; i++) {
@@ -1655,16 +1654,18 @@ const updateAnymal = () => {
             }
         }
 
+        const position = movementContainer.getCertainPosition(robotNum, current);
+
         viewer.setRobotPosition(robotNum, {
-            x: mov['pos_' + 0],
-            y: mov['pos_' + 1],
-            z: mov['pos_' + 2],
+            x: position['pos_' + 0],
+            y: position['pos_' + 1],
+            z: position['pos_' + 2],
         });
 
         viewer.setRobotRotation(robotNum, {
-            x: mov['rot_' + 0],
-            y: mov['rot_' + 1],
-            z: mov['rot_' + 2],
+            x: position['rot_' + 0],
+            y: position['rot_' + 1],
+            z: position['rot_' + 2],
         });
     }
 };
