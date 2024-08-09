@@ -144,35 +144,39 @@
                     <div id="plots-controls-container" class="xxx-container">
                         <div id="plots-controls" class="hidden">
                             <div id="toggle-plots-controls"></div>
-                            <label>
-                                Plots Option:
-                                <select id="plots-group-selection">
-                                    <option value="LineRobot" selected>
-                                        Line Plot by Robot
-                                    </option>
-                                    <option value="LineLink">
-                                        Line Plot by Joint
-                                    </option>
-                                    <option value="HeatMapRobot">
-                                        Heatmap by Robot
-                                    </option>
-                                    <option value="HeatMapLink">
-                                        Heatmap by Joint
-                                    </option>
-                                    <option value="HeatMapVeloRobot">
-                                        Velocity by Robot
-                                    </option>
-                                    <option value="HeatMapVeloLink">
-                                        Velocity by Joint
-                                    </option>
-                                    <option value="HeatMapForceRobot">
-                                        Torque by Robot
-                                    </option>
-                                    <option value="HeatMapForceLink">
-                                        Torque by Joint
-                                    </option>
-                                </select>
-                            </label>
+                                <label>
+                                    Plots Option:&nbsp;&nbsp;
+                                    <select id="small-plot-selection-plot">
+                                        <option value="Line Chart">
+                                            Line Chart
+                                        </option>
+                                        <option value="Heat Map">
+                                            Heat Map
+                                        </option>
+                                    </select>
+                                </label>
+                                <label>
+                                    Group By:&nbsp;&nbsp;
+                                    <select id="small-plot-selection-groupby">
+                                        <option value="Robot">Robot</option>
+                                        <option value="Joint">Joint</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    Metric:&nbsp;&nbsp;
+                                    <select id="small-plot-selection-metric">
+                                        <option value="Joint Position">
+                                            Joint Position
+                                        </option>
+                                        <option value="Joint Velocity">
+                                            Joint Velocity
+                                        </option>
+                                        <option value="Joint Torque">
+                                            Joint Torque
+                                        </option>
+                                        <option value="Reward">Reward</option>
+                                    </select>
+                                </label>
                             <div id="plots-link-option-name"></div>
                             <div
                                 id="plots-link-controls-container"

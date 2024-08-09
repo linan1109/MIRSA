@@ -68,7 +68,17 @@ const togglePlotsControls = document.getElementById('toggle-plots-controls');
 const plotsLinkControlsContainer = document.getElementById(
     'plots-link-controls-container',
 );
-const plotsGroupSelection = document.getElementById('plots-group-selection');
+// const plotsGroupSelection = document.getElementById('plots-group-selection');
+const smallPlotSeletionPlot = document.getElementById(
+    'small-plot-selection-plot',
+);
+const smallPlotSelectionMetric = document.getElementById(
+    'small-plot-selection-metric',
+);
+const smallPlotSelectionGroupBy = document.getElementById(
+    'small-plot-selection-groupby',
+);
+
 const plotsLinkOptionName = document.getElementById('plots-link-option-name');
 const plotsRobotControlsContainer = document.getElementById(
     'plots-robot-controls-container',
@@ -1127,7 +1137,13 @@ const plotsSVGRedraw = () => {
     while (svgContainer.firstChild) {
         svgContainer.removeChild(svgContainer.firstChild);
     }
-    if (plotsGroupSelection.value === 'LineRobot') {
+    const plotType = smallPlotSeletionPlot.value;
+    const groupBy = smallPlotSelectionGroupBy.value;
+    const metric = smallPlotSelectionMetric.value;
+
+    const type = plotType + groupBy + metric;
+
+    if (type === 'Line ChartRobotJoint Position') {
         plotsLinkOptionName.textContent = 'Highlight Options:';
         plotsRobotOptionName.textContent = 'Plot Robots:';
         plotsLinkOptionName.hidden = false;
@@ -1144,7 +1160,7 @@ const plotsSVGRedraw = () => {
         for (const key in globalVariables.checkedRobots) {
             addRobotSVG(globalVariables.checkedRobots[key]);
         }
-    } else if (plotsGroupSelection.value === 'LineLink') {
+    } else if (type === 'Line ChartJointJoint Position') {
         plotsLinkOptionName.textContent = 'Plot Joints:';
         plotsRobotOptionName.textContent = 'Highlight Robots:';
 
@@ -1163,7 +1179,7 @@ const plotsSVGRedraw = () => {
         for (const key in globalVariables.checkedObs) {
             addObsSVG(globalVariables.checkedObs[key]);
         }
-    } else if (plotsGroupSelection.value === 'HeatMapRobot') {
+    } else if (type === 'Heat MapRobotJoint Position') {
         plotsRobotOptionName.textContent = 'Plot Robots:';
         plotsLinkOptionName.hidden = true;
         plotsRobotOptionName.hidden = false;
@@ -1179,7 +1195,7 @@ const plotsSVGRedraw = () => {
         for (const key in globalVariables.checkedRobots) {
             addHeatMapRobotSVG(globalVariables.checkedRobots[key]);
         }
-    } else if (plotsGroupSelection.value === 'HeatMapLink') {
+    } else if (type === 'Heat MapJointJoint Position') {
         plotsLinkOptionName.textContent = 'Plot Joints:';
         globalVariables.groupByRobot = false;
         plotsLinkOptionName.hidden = false;
@@ -1195,7 +1211,7 @@ const plotsSVGRedraw = () => {
         for (const key in globalVariables.checkedObs) {
             addHeatMapObsSVG(globalVariables.checkedObs[key]);
         }
-    } else if (plotsGroupSelection.value === 'HeatMapVeloRobot') {
+    } else if (type === 'Heat MapRobotJoint Velocity') {
         plotsRobotOptionName.textContent = 'Plot Robots:';
         plotsLinkOptionName.hidden = true;
         plotsRobotOptionName.hidden = false;
@@ -1211,7 +1227,7 @@ const plotsSVGRedraw = () => {
         for (const key in globalVariables.checkedRobots) {
             addHeatMapRobotVeloSVG(globalVariables.checkedRobots[key]);
         }
-    } else if (plotsGroupSelection.value === 'HeatMapVeloLink') {
+    } else if (type === 'Heat MapJointJoint Velocity') {
         plotsLinkOptionName.textContent = 'Plot Joints:';
         globalVariables.groupByRobot = false;
         plotsLinkOptionName.hidden = false;
@@ -1227,7 +1243,7 @@ const plotsSVGRedraw = () => {
         for (const key in globalVariables.checkedObs) {
             addHeatMapVeloObsSVG(globalVariables.checkedObs[key]);
         }
-    } else if (plotsGroupSelection.value === 'HeatMapForceRobot') {
+    } else if (type === 'Heat MapRobotJoint Torque') {
         plotsRobotOptionName.textContent = 'Plot Robots:';
         plotsLinkOptionName.hidden = true;
         plotsRobotOptionName.hidden = false;
@@ -1243,7 +1259,7 @@ const plotsSVGRedraw = () => {
         for (const key in globalVariables.checkedRobots) {
             addHeatMapRobotForceSVG(globalVariables.checkedRobots[key]);
         }
-    } else if (plotsGroupSelection.value === 'HeatMapForceLink') {
+    } else if (type === 'Heat MapJointJoint Torque') {
         plotsLinkOptionName.textContent = 'Plot Joints:';
         globalVariables.groupByRobot = false;
         plotsLinkOptionName.hidden = false;
@@ -1292,7 +1308,29 @@ const globalHeatmapRedraw = () => {
     changeGlobalPlot(globalHeatmapSelection.value, option);
 };
 
-plotsGroupSelection.addEventListener('change', () => {
+smallPlotSeletionPlot.addEventListener('change', () => {
+    const value = smallPlotSeletionPlot.value;
+    const groupByOptions = Object.keys(globalVariables.globalPlotSelections[value]);
+    while (smallPlotSelectionGroupBy.firstChild) {
+        smallPlotSelectionGroupBy.removeChild(smallPlotSelectionGroupBy.firstChild);
+    }
+    for (const option of groupByOptions) {
+        addSelectionToElement(smallPlotSelectionGroupBy, option);
+    }
+    plotsSVGRedraw();
+});
+smallPlotSelectionGroupBy.addEventListener('change', () => {
+    const value = smallPlotSelectionGroupBy.value;
+    const metricOptions = globalVariables.globalPlotSelections[smallPlotSeletionPlot.value][value];
+    while (smallPlotSelectionMetric.firstChild) {
+        smallPlotSelectionMetric.removeChild(smallPlotSelectionMetric.firstChild);
+    }
+    for (const option of metricOptions) {
+        addSelectionToElement(smallPlotSelectionMetric, option);
+    }
+    plotsSVGRedraw();
+});
+smallPlotSelectionMetric.addEventListener('change', () => {
     plotsSVGRedraw();
 });
 
