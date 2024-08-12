@@ -19,6 +19,26 @@ export default class SmallHeatmapRobotVelo extends SmallHeatMapSVG {
     setup() {
         this.yLabels = Object.values(globalVariables.nameObsMap);
         this.gridHeight = this.height / this.yLabels.length;
+        // get min and max values for color scale
+        this.minValue = 0;
+        this.maxValue = 0;
+        for (let i = 0; i < this.dataLength; i++) {
+            for (let j = 0; j < this.yLabels.length; j++) {
+                const value = parseFloat(this.originalData[i][this.yLabels[j]]);
+                if (value < this.minValue) {
+                    this.minValue = value;
+                }
+                if (value > this.maxValue) {
+                    this.maxValue = value;
+                }
+            }
+        }
+
+        this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([
+            this.minValue,
+            this.maxValue,
+        ]);
+        console.log(this.minValue, this.maxValue);
 
         this.createHeatmap();
 
@@ -37,8 +57,6 @@ export default class SmallHeatmapRobotVelo extends SmallHeatMapSVG {
         const eachGridDataLength = Math.floor(this.windowSize / this.gridNum);
         const processedData = [];
         start = Math.floor(start);
-        let maxVelocity = 0;
-        let minVelocity = 0;
 
         this.yLabels.forEach((measurement, i) => {
             for (let j = 0; j < this.gridNum; j++) {
@@ -56,17 +74,9 @@ export default class SmallHeatmapRobotVelo extends SmallHeatMapSVG {
                     y: i,
                     value: value,
                 });
-                maxVelocity = Math.max(maxVelocity, value);
-                minVelocity = Math.min(minVelocity, value);
             }
         });
 
-        this.maxVelocity = maxVelocity;
-        this.minVelocity = minVelocity;
-        this.colorScale = globalVariables.HeatmapColorScaleVelo.domain([
-            minVelocity,
-            maxVelocity,
-        ]);
         this.all_xLabels = Array.from(
             { length: this.gridNum },
             (_, i) => i * eachGridDataLength,

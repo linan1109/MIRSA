@@ -27,9 +27,10 @@ export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
             for (let j = 0; j < this.gridNum; j++) {
                 let sum = 0;
                 for (let k = 0; k < eachGridDataLength; k++) {
-                    sum += parseFloat(
-                        this.data[j * eachGridDataLength + k][measurement],
-                    );
+                    const v = parseFloat(this.data[j * eachGridDataLength + k][measurement]);
+                    sum += v;
+                    maxVelocity = Math.max(maxVelocity, v);
+                    minVelocity = Math.min(minVelocity, v);
                 }
                 const value = sum / eachGridDataLength;
                 processedData.push({
@@ -37,8 +38,6 @@ export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
                     y: i,
                     value: value,
                 });
-                maxVelocity = Math.max(maxVelocity, value);
-                minVelocity = Math.min(minVelocity, value);
             }
             yLabelOrder[measurement] = i;
         });
@@ -46,7 +45,9 @@ export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
         this.yLabelOrder = yLabelOrder;
         this.maxVelocity = maxVelocity;
         this.minVelocity = minVelocity;
-        this.colorScale = globalVariables.HeatmapColorScaleVelo.domain([ minVelocity, maxVelocity ]);
+        console.log('maxVelocity', maxVelocity);
+        console.log('minVelocity', minVelocity);
+        this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([ minVelocity, maxVelocity ]);
         this.sendChangeEvent();
         return processedData;
     }
@@ -99,6 +100,7 @@ export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
             this.maxVelocity,
             (this.maxVelocity - this.minVelocity) / 10,
         );
+        legends.push(this.maxVelocity);
         for (let i = 0; i < legends.length; i++) {
             legends[i] = legends[i].toFixed(2);
         }

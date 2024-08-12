@@ -25,6 +25,28 @@ export default class SmallHeatmapObsVelo extends SmallHeatMapSVG {
             this.height = this.gridHeight * this.yLabels.length;
         }
 
+        // get min and max values for color scale
+        this.minValue = 0;
+        this.maxValue = 0;
+        for (let i = 0; i < this.dataLength; i++) {
+            for (let j = 0; j < this.yLabels.length; j++) {
+                const value = parseFloat(this.originalData[i][this.yLabels[j]]);
+                if (value < this.minValue) {
+                    this.minValue = value;
+                }
+                if (value > this.maxValue) {
+                    this.maxValue = value;
+                }
+            }
+        }
+        console.log(this.minValue, this.maxValue);
+
+        this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([
+            this.minValue,
+            this.maxValue,
+        ]);
+
+
         this.createHeatmap();
         this.svg.call((g) =>
             g
@@ -41,8 +63,6 @@ export default class SmallHeatmapObsVelo extends SmallHeatMapSVG {
         const eachGridDataLength = Math.floor(this.windowSize / this.gridNum);
         const processedData = [];
         start = Math.floor(start);
-        let maxVelocity = 0;
-        let minVelocity = 0;
 
         for (let i = 0; i < this.yLabels.length; i++) {
             const robotNum = this.yLabels[i];
@@ -60,17 +80,9 @@ export default class SmallHeatmapObsVelo extends SmallHeatMapSVG {
                     y: i,
                     value: value,
                 });
-                maxVelocity = Math.max(maxVelocity, value);
-                minVelocity = Math.min(minVelocity, value);
             }
         }
 
-        this.maxVelocity = maxVelocity;
-        this.minVelocity = minVelocity;
-        this.colorScale = globalVariables.HeatmapColorScaleVelo.domain([
-            minVelocity,
-            maxVelocity,
-        ]);
         this.all_xLabels = Array.from(
             { length: this.gridNum },
             (_, i) => i * eachGridDataLength,

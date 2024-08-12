@@ -38,9 +38,12 @@ export default class GlobalHeatmapVelocityObs extends globalHeatMapSVG {
             for (let j = 0; j < this.gridNum; j++) {
                 let sum = 0;
                 for (let k = 0; k < eachGridDataLength; k++) {
-                    sum += parseFloat(
+                    const v = parseFloat(
                         data[j * eachGridDataLength + k][this.obsName],
                     );
+                    sum += v;
+                    maxVelocity = Math.max(maxVelocity, v);
+                    minVelocity = Math.min(minVelocity, v);
                 }
                 const value = sum / eachGridDataLength;
                 processedData.push({
@@ -48,8 +51,6 @@ export default class GlobalHeatmapVelocityObs extends globalHeatMapSVG {
                     y: i,
                     value: value,
                 });
-                maxVelocity = Math.max(maxVelocity, value);
-                minVelocity = Math.min(minVelocity, value);
             }
             yLabelOrder[this.yLabels[i]] = i;
         }
@@ -61,7 +62,7 @@ export default class GlobalHeatmapVelocityObs extends globalHeatMapSVG {
         this.yLabelOrder = yLabelOrder;
         this.minVelocity = minVelocity;
         this.maxVelocity = maxVelocity;
-        this.colorScale = globalVariables.HeatmapColorScaleVelo.domain([
+        this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([
             minVelocity,
             maxVelocity,
         ]);
@@ -116,6 +117,7 @@ export default class GlobalHeatmapVelocityObs extends globalHeatMapSVG {
             this.maxVelocity,
             (this.maxVelocity - this.minVelocity) / 10,
         );
+        legends.push(this.maxVelocity);
         for (let i = 0; i < legends.length; i++) {
             legends[i] = legends[i].toFixed(2);
         }
