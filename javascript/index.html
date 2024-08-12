@@ -160,9 +160,10 @@
                                     <select id="small-plot-selection-groupby">
                                         <option value="Robot">Robot</option>
                                         <option value="Joint">Joint</option>
+                                        <option value="Reward">Reward</option>
                                     </select>
                                 </label>
-                                <label>
+                                <label id="small-plot-selection-metric-label">
                                     Metric:&nbsp;&nbsp;
                                     <select id="small-plot-selection-metric">
                                         <option value="Joint Position">
@@ -187,6 +188,12 @@
                                 id="plots-robot-controls-container"
                                 class="plots-controls-container"
                             ></div>
+                            <div id="plots-reward-option-name"></div>
+                            <div
+                                id="plots-reward-controls-container"
+                                class="plots-controls-container"
+                            ></div>
+                            
                         </div>
                     </div>
                     <div id="svg-container" class="xxx-container"></div>
@@ -288,6 +295,7 @@
                     <select id="global-plot-selection-groupby">
                         <option value="Robot">Robot</option>
                         <option value="Joint">Joint</option>
+                        <option value="Reward">Reward</option>
                     </select>
                 </label>
                 <label>

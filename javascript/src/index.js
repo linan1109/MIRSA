@@ -23,6 +23,8 @@ import {
     SmallLineChartObsForce,
     SmallLineChartRobotVelo,
     SmallLineChartRobotForce,
+    SmallLineChartReward,
+    SmallLineChartOneRewardAllRobot,
 } from './utils/small-svg/small-svg-index.js';
 // import PositionSVG from './utils/realtime-svg/position-svg.js';
 import XYZ3D from './utils/realtime-svg/xyz-3d.js';
@@ -76,12 +78,22 @@ const togglePlotsControls = document.getElementById('toggle-plots-controls');
 const plotsLinkControlsContainer = document.getElementById(
     'plots-link-controls-container',
 );
+const plotsRewardOptionName = document.getElementById(
+    'plots-reward-option-name',
+);
+const plotsRewardControlsContainer = document.getElementById(
+    'plots-reward-controls-container',
+);
+
 // const plotsGroupSelection = document.getElementById('plots-group-selection');
 const smallPlotSeletionPlot = document.getElementById(
     'small-plot-selection-plot',
 );
 const smallPlotSelectionMetric = document.getElementById(
     'small-plot-selection-metric',
+);
+const smallPlotSelectionMetricLabel = document.getElementById(
+    'small-plot-selection-metric-label',
 );
 const smallPlotSelectionGroupBy = document.getElementById(
     'small-plot-selection-groupby',
@@ -707,6 +719,43 @@ const addObsSelectToggles = () => {
     }
 };
 
+const addRewardSelectToggles = () => {
+    // ADD right bar selection
+    while (plotsRewardControlsContainer.firstChild) {
+        plotsRewardControlsContainer.removeChild(
+            plotsRewardControlsContainer.firstChild,
+        );
+    }
+
+    for (const key of movementContainer.reward_names) {
+        // create toggle button
+        const toggle = document.createElement('div');
+        toggle.className = 'toggle';
+        toggle.innerHTML = key;
+        toggle.textContent = key;
+        toggle.addEventListener('click', () => {
+            if (toggle.classList.contains('checked')) {
+                toggle.classList.remove('checked');
+                // remove from checkedObs
+                const index = globalVariables.checkedRewards.indexOf(key);
+                if (index > -1) {
+                    globalVariables.checkedRewards.splice(index, 1);
+                    updateAllSVG();
+                }
+                if (svgList[key] !== undefined) {
+                    svgList[key].svg.remove();
+                }
+            } else {
+                toggle.classList.add('checked');
+                globalVariables.checkedRewards.push(key);
+                plotsSVGRedraw();
+                globalHeatmapRedraw();
+            }
+        });
+        plotsRewardControlsContainer.appendChild(toggle);
+    }
+};
+
 const addRobotSelectToggles = (robotNum) => {
     const toggle = document.createElement('div');
     toggle.id = 'plot-svg-toggle-robot' + robotNum;
@@ -809,6 +858,11 @@ const loadMovementFromCSV = (robotNum) => {
             addObsSelectToggles();
         }
 
+        if (plotsRewardControlsContainer.childElementCount === 0) {
+            plotsRewardOptionName.textContent = 'Reward Highlight Options:';
+            addRewardSelectToggles();
+        }
+
         // add new robot option to global heatmap selection
         if (globalPlotSelectionGroupBy.value === 'Robot') {
             addNewRobotOptionToGlobalHeatmapSelection(robotNum);
@@ -827,6 +881,33 @@ const loadMovementFromCSV = (robotNum) => {
         fileNameDiv.textContent = fileName;
     };
     reader.readAsText(file);
+};
+
+const addLineChartOneReward = (rewardName) => {
+    if (svgList[rewardName] !== undefined) {
+        svgList[rewardName].svg.remove();
+    }
+    const svg = new SmallLineChartOneRewardAllRobot(
+        rewardName,
+        PlotsPart.offsetWidth,
+    );
+    const svgNode = svg.svg.node();
+    svgNode.id = 'plot-all' + rewardName;
+    svgContainer.appendChild(svgNode);
+    svgList[rewardName] = svg;
+    svg.updatePlotOnTime();
+};
+
+const addLineChartRewardOneRobot = (robotNum) => {
+    if (svgList[robotNum] !== undefined) {
+        svgList[robotNum].svg.remove();
+    }
+    const svg = new SmallLineChartReward(robotNum, PlotsPart.offsetWidth);
+    const svgNode = svg.svg.node();
+    svgNode.id = 'plot-all' + robotNum;
+    svgContainer.appendChild(svgNode);
+    svgList[robotNum] = svg;
+    svg.updatePlotOnTime();
 };
 
 const addRobotSVG = (robotNum) => {
@@ -1130,6 +1211,8 @@ const changeGlobalPlot = (num, type = null) => {
         changeGlobalPlotToLineRobotVelo(num);
     } else if (type === 'Line ChartRobotJoint Torque') {
         changeGlobalPlotToLineRobotForce(num);
+    } else if (type === 'Line ChartRewardRobot') {
+        addLineChartRewardOneRobot(num);
     }
 };
 
@@ -1267,15 +1350,20 @@ const plotsSVGRedraw = () => {
         if (groupBy === 'Robot') {
             plotsLinkOptionName.textContent = 'Highlight Options:';
             plotsRobotOptionName.textContent = 'Plot Robots:';
-            plotsLinkOptionName.hidden = false;
             plotsRobotOptionName.hidden = false;
             plotsRobotControlsContainer.hidden = false;
-            plotsLinkControlsContainer.hidden = false;
             for (const child of plotsRobotControlsContainer.children) {
                 child.hidden = false;
             }
+            plotsLinkOptionName.hidden = false;
+            plotsLinkControlsContainer.hidden = false;
             for (const child of plotsLinkControlsContainer.children) {
                 child.hidden = false;
+            }
+            plotsRewardControlsContainer.hidden = true;
+            plotsRewardOptionName.hidden = true;
+            for (const child of plotsRewardControlsContainer.children) {
+                child.hidden = true;
             }
             globalVariables.groupByRobot = true;
             if (metric === 'Joint Position') {
@@ -1289,6 +1377,23 @@ const plotsSVGRedraw = () => {
             } else if (metric === 'Joint Torque') {
                 for (const key in globalVariables.checkedRobots) {
                     addLineRobotForceSVG(globalVariables.checkedRobots[key]);
+                }
+            } else if (metric === 'Reward') {
+                plotsRewardControlsContainer.hidden = false;
+                plotsRewardOptionName.hidden = false;
+                plotsRewardOptionName.textContent = 'Highlight Rewards:';
+                for (const child of plotsRewardControlsContainer.children) {
+                    child.hidden = false;
+                }
+                plotsLinkOptionName.hidden = true;
+                plotsLinkControlsContainer.hidden = true;
+                for (const child of plotsLinkControlsContainer.children) {
+                    child.hidden = true;
+                }
+                for (const key in globalVariables.checkedRobots) {
+                    addLineChartRewardOneRobot(
+                        globalVariables.checkedRobots[key],
+                    );
                 }
             }
         } else if (groupBy === 'Joint') {
@@ -1304,6 +1409,11 @@ const plotsSVGRedraw = () => {
             }
             for (const child of plotsLinkControlsContainer.children) {
                 child.hidden = false;
+            }
+            plotsRewardControlsContainer.hidden = true;
+            plotsRewardOptionName.hidden = true;
+            for (const child of plotsRewardControlsContainer.children) {
+                child.hidden = true;
             }
 
             globalVariables.groupByRobot = false;
@@ -1322,6 +1432,33 @@ const plotsSVGRedraw = () => {
                     addLineObsForceSVG(globalVariables.checkedObs[key]);
                 }
             }
+        } else if (groupBy === 'Reward') {
+            plotsRobotOptionName.hidden = false;
+            plotsRobotOptionName.textContent = 'Highlight Robots:';
+            plotsRobotControlsContainer.hidden = false;
+            for (const child of plotsRobotControlsContainer.children) {
+                child.hidden = false;
+            }
+
+            plotsLinkOptionName.hidden = true;
+            plotsLinkControlsContainer.hidden = true;
+            for (const child of plotsLinkControlsContainer.children) {
+                child.hidden = true;
+            }
+
+            plotsRewardControlsContainer.hidden = false;
+            plotsRewardOptionName.hidden = false;
+            plotsRewardOptionName.textContent = 'Plot Rewards:';
+
+            for (const child of plotsRewardControlsContainer.children) {
+                child.hidden = false;
+            }
+            globalVariables.groupByRobot = false;
+            if (metric === 'Robot') {
+                for (const key in globalVariables.checkedRewards) {
+                    addLineChartOneReward(globalVariables.checkedRewards[key]);
+                }
+            }
         }
     } else if (plotType === 'Heat Map') {
         if (groupBy === 'Robot') {
@@ -1334,6 +1471,11 @@ const plotsSVGRedraw = () => {
                 child.hidden = false;
             }
             for (const child of plotsLinkControlsContainer.children) {
+                child.hidden = true;
+            }
+            plotsRewardControlsContainer.hidden = true;
+            plotsRewardOptionName.hidden = true;
+            for (const child of plotsRewardControlsContainer.children) {
                 child.hidden = true;
             }
             globalVariables.groupByRobot = true;
@@ -1364,6 +1506,11 @@ const plotsSVGRedraw = () => {
             for (const child of plotsLinkControlsContainer.children) {
                 child.hidden = false;
             }
+            plotsRewardControlsContainer.hidden = true;
+            plotsRewardOptionName.hidden = true;
+            for (const child of plotsRewardControlsContainer.children) {
+                child.hidden = true;
+            }
             globalVariables.groupByRobot = false;
             if (metric === 'Joint Position') {
                 for (const key in globalVariables.checkedObs) {
@@ -1381,6 +1528,15 @@ const plotsSVGRedraw = () => {
                 }
             }
         }
+    }
+
+    // if only one metric, then hide the metric selection
+    if (smallPlotSelectionMetric.options.length <= 1) {
+        smallPlotSelectionMetric.hidden = true;
+        smallPlotSelectionMetricLabel.hidden = true;
+    } else {
+        smallPlotSelectionMetric.hidden = false;
+        smallPlotSelectionMetricLabel.hidden = false;
     }
 };
 
@@ -1654,7 +1810,10 @@ const updateAnymal = () => {
             }
         }
 
-        const position = movementContainer.getCertainPosition(robotNum, current);
+        const position = movementContainer.getCertainPosition(
+            robotNum,
+            current,
+        );
 
         viewer.setRobotPosition(robotNum, {
             x: position['pos_' + 0],

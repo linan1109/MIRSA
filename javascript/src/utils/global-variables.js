@@ -33,6 +33,7 @@ const globalVariables = {
 
     checkedObs: [],
     checkedRobots: [],
+    checkedRewards: [],
 
     movementIndexStart: 0,
     movementMinLen: Number.MAX_SAFE_INTEGER,
@@ -65,10 +66,12 @@ const globalVariables = {
         'Line Chart': {
             'Robot': ['Joint Position', 'Joint Velocity', 'Joint Torque', 'Reward'],
             'Joint': ['Joint Position', 'Joint Velocity', 'Joint Torque'],
+            'Reward': ['Robot'],
         },
         'Heat Map': {
             'Robot': ['Joint Position', 'Joint Velocity', 'Joint Torque', 'Reward'],
             'Joint': ['Joint Position', 'Joint Velocity', 'Joint Torque'],
+            'Reward': ['Robot'],
         },
     },
 };
