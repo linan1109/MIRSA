@@ -43,6 +43,8 @@ import {
     GlobalLineChartObsForce,
     GlobalLineChartRobotVelo,
     GlobalLineChartRobotForce,
+    GlobalLineChartOneRobotAllReward,
+    GlobalLineChartAllRobotOneReward,
     GlobalXAxis,
 } from './utils/global-svg/global-svg-index.js';
 import SnapShotDiv from './utils/snapshot.js';
@@ -495,6 +497,17 @@ const addNewObsOptionToGlobalHeatmapSelection = (obsName) => {
     globalHeatmapSelection.appendChild(option);
 };
 
+const addNewRewardOptionToGlobalHeatmapSelection = (rewardName) => {
+    // if already exists, return
+    if (globalHeatmapSelection.querySelector(`option[value='${ rewardName }']`)) {
+        return;
+    }
+    const option = document.createElement('option');
+    option.value = rewardName;
+    option.textContent = rewardName;
+    globalHeatmapSelection.appendChild(option);
+};
+
 const initRobotControlState = (robotNumber) => {
     const toggleVisibility = document.getElementById(
         `robot${ robotNumber }-visible`,
@@ -900,18 +913,6 @@ const addLineChartOneReward = (rewardName) => {
     svg.updatePlotOnTime();
 };
 
-const addLineChartRewardOneRobot = (robotNum) => {
-    if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
-    }
-    const svg = new SmallLineChartReward(robotNum, PlotsPart.offsetWidth);
-    const svgNode = svg.svg.node();
-    svgNode.id = 'plot-all' + robotNum;
-    svgContainer.appendChild(svgNode);
-    svgList[robotNum] = svg;
-    svg.updatePlotOnTime();
-};
-
 const addRobotSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
         svgList[robotNum].svg.remove();
@@ -930,6 +931,21 @@ const addLineRobotVeloSVG = (robotNum) => {
         svgList[robotNum].svg.remove();
     }
     const svg = new SmallLineChartRobotVelo(robotNum, PlotsPart.offsetWidth);
+    const svgNode = svg.svg.node();
+    svgNode.id = 'plot-all' + robotNum;
+    svgContainer.appendChild(svgNode);
+    svgList[robotNum] = svg;
+    svg.updatePlotOnTime();
+};
+
+const addLineChartRewardOneRobot = (robotNum) => {
+    if (svgList[robotNum] !== undefined) {
+        svgList[robotNum].svg.remove();
+    }
+    const svg = new SmallLineChartReward(
+        robotNum,
+        PlotsPart.offsetWidth,
+    );
     const svgNode = svg.svg.node();
     svgNode.id = 'plot-all' + robotNum;
     svgContainer.appendChild(svgNode);
@@ -1106,6 +1122,36 @@ const changeGlobalPlotToLineRobotForce = (robotNum) => {
     globalHeatmapContainer.appendChild(svgNode);
 };
 
+const changeGlobalPlotToLineOneRewardAllRobot = (rewardName) => {
+    while (globalHeatmapContainer.firstChild) {
+        globalHeatmapContainer.removeChild(globalHeatmapContainer.firstChild);
+        globalHeatmapSvg = null;
+    }
+    const svg = new GlobalLineChartAllRobotOneReward(
+        rewardName,
+        globalPlotPart.offsetWidth,
+        globalPlotPart.offsetHeight,
+    );
+    const svgNode = svg.svg.node();
+    globalHeatmapSvg = svg;
+    globalHeatmapContainer.appendChild(svgNode);
+};
+
+const changeGlobalPlotToLineOneRobotAllReward = (rewardName) => {
+    while (globalHeatmapContainer.firstChild) {
+        globalHeatmapContainer.removeChild(globalHeatmapContainer.firstChild);
+        globalHeatmapSvg = null;
+    }
+    const svg = new GlobalLineChartOneRobotAllReward(
+        rewardName,
+        globalPlotPart.offsetWidth,
+        globalPlotPart.offsetHeight,
+    );
+    const svgNode = svg.svg.node();
+    globalHeatmapSvg = svg;
+    globalHeatmapContainer.appendChild(svgNode);
+};
+
 const changeGlobalPlotToHeatmapObs = (obsName) => {
     while (globalHeatmapContainer.firstChild) {
         globalHeatmapContainer.removeChild(globalHeatmapContainer.firstChild);
@@ -1216,6 +1262,7 @@ const changeGlobalPlotToHeatmapForceObs = (obsName) => {
 };
 
 const changeGlobalPlot = (num, type = null) => {
+    console.log('changeGlobalPlot to ' + num);
     if (type === null) {
         type =
             globalPlotSelectionPlot.value +
@@ -1247,7 +1294,9 @@ const changeGlobalPlot = (num, type = null) => {
     } else if (type === 'Line ChartRobotJoint Torque') {
         changeGlobalPlotToLineRobotForce(num);
     } else if (type === 'Line ChartRewardRobot') {
-        addLineChartRewardOneRobot(num);
+        changeGlobalPlotToLineOneRewardAllRobot(num);
+    } else if (type === 'Line ChartRobotReward') {
+        changeGlobalPlotToLineOneRobotAllReward(num);
     }
 };
 
@@ -1630,6 +1679,13 @@ const globalHeatmapRedraw = () => {
         // add options for links
         for (const key in globalVariables.nameObsMap) {
             addNewObsOptionToGlobalHeatmapSelection(key);
+        }
+        const firstOption = globalHeatmapSelection.options[0];
+        globalHeatmapSelection.value = firstOption.value;
+    } else if (globalPlotSelectionGroupBy.value === 'Reward') {
+        // add options for rewards
+        for (const key of movementContainer.getRewardLabels()) {
+            addNewRewardOptionToGlobalHeatmapSelection(key);
         }
         const firstOption = globalHeatmapSelection.options[0];
         globalHeatmapSelection.value = firstOption.value;
