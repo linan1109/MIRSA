@@ -1,8 +1,6 @@
 import { SmallHeatMapSVG } from './small-svg.js';
 import movementContainer from '../movement-container.js';
-import globalTimer from '../global-timer.js';
 import globalVariables from '../global-variables.js';
-import * as d3 from 'd3';
 
 export default class SmallHeatmapRobot extends SmallHeatMapSVG {
 

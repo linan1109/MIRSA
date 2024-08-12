@@ -1,29 +1,36 @@
 import { SmallHeatMapSVG } from './small-svg.js';
 import movementContainer from '../movement-container.js';
 import globalVariables from '../global-variables.js';
-export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
 
-    constructor(robotNum, gridNum, offsetWidth) {
+export default class SmallHeatmapOneRewardAllRobot extends SmallHeatMapSVG {
+
+    constructor(rewardName, gridNum, offsetWidth) {
         super(gridNum, offsetWidth);
-        this.robotNum = robotNum;
-        this.originalData = movementContainer.getJointForce(robotNum);
-        this.dataLength = this.originalData.length;
-        this.id = 'small-heatmap-robot' + robotNum;
+
+        // this.data = movementContainer.getMovement(robotNum);
+        // this.dataLength = this.data.length;
+        this.id = 'small-heatmap-obs' + rewardName;
+        this.yLabels = movementContainer.robotNums;
+        this.rewardName = rewardName;
 
         this.setup();
     }
 
     setup() {
-        this.yLabels = Object.values(globalVariables.nameObsMap);
         this.gridHeight = this.height / this.yLabels.length;
+        if (this.gridHeight > 2 * this.gridWidth) {
+            this.gridHeight = this.gridWidth;
+            this.height = this.gridHeight * this.yLabels.length;
+        }
+
         // get min and max values for color scale
         this.minValue = 0;
         this.maxValue = 0;
-        const mins = movementContainer.getMinByRobot(this.robotNum);
-        const maxs = movementContainer.getMaxByRobot(this.robotNum);
-        for (const obsName of this.yLabels) {
-            this.minValue = Math.min(this.minValue, mins[obsName + '_force']);
-            this.maxValue = Math.max(this.maxValue, maxs[obsName + '_force']);
+        for (const robotNum of this.yLabels) {
+            const mins = movementContainer.getMinByRobot(robotNum);
+            const maxs = movementContainer.getMaxByRobot(robotNum);
+            this.minValue = Math.min(this.minValue, mins[this.rewardName]);
+            this.maxValue = Math.max(this.maxValue, maxs[this.rewardName]);
         }
 
         this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([
@@ -32,7 +39,6 @@ export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
         ]);
 
         this.createHeatmap();
-
         this.svg.call((g) =>
             g
                 .append('text')
@@ -40,7 +46,7 @@ export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
                 .attr('y', -10)
                 .attr('text-anchor', 'middle')
                 .attr('font-size', 12)
-                .text('Robot ' + this.robotNum),
+                .text(this.rewardName),
         );
     }
 
@@ -49,14 +55,14 @@ export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
         const processedData = [];
         start = Math.floor(start);
 
-        this.yLabels.forEach((measurement, i) => {
+        for (let i = 0; i < this.yLabels.length; i++) {
+            const robotNum = this.yLabels[i];
+            const data = movementContainer.getReward(robotNum);
             for (let j = 0; j < this.gridNum; j++) {
                 let sum = 0;
                 for (let k = 0; k < eachGridDataLength; k++) {
                     sum += parseFloat(
-                        this.originalData[start + j * eachGridDataLength + k][
-                            measurement
-                        ],
+                        data[start + j * eachGridDataLength + k][this.rewardName],
                     );
                 }
                 const value = sum / eachGridDataLength;
@@ -66,7 +72,7 @@ export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
                     value: value,
                 });
             }
-        });
+        }
 
         this.all_xLabels = Array.from(
             { length: this.gridNum },

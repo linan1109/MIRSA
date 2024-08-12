@@ -17,6 +17,8 @@ import {
     SmallHeatmapRobot,
     SmallHeatmapRobotForce,
     SmallHeatmapRobotVelo,
+    SmallHeatmaphAllRewardOneRobot,
+    SmallHeatmapOneRewardAllRobot,
     SmallLineChartObs,
     SmallLineChartRobot,
     SmallLineChartObsVelo,
@@ -977,6 +979,39 @@ const addHeatMapRobotVeloSVG = (robotNum) => {
     svgList[robotNum] = svg;
     svg.updatePlotOnTime();
 };
+
+const addHeatMapOneRewardALLRobotSVG = (rewardName) => {
+    if (svgList[rewardName] !== undefined) {
+        svgList[rewardName].svg.remove();
+    }
+    const svg = new SmallHeatmapOneRewardAllRobot(
+        rewardName,
+        globalVariables.smallHeatMapGridNum,
+        PlotsPart.offsetWidth,
+    );
+    const svgNode = svg.svg.node();
+    svgNode.id = 'heatmap-all' + rewardName;
+    svgContainer.appendChild(svgNode);
+    svgList[rewardName] = svg;
+    svg.updatePlotOnTime();
+};
+
+const addHeatMapRobotALLRewardSVG = (robotNum) => {
+    if (svgList[robotNum] !== undefined) {
+        svgList[robotNum].svg.remove();
+    }
+    const svg = new SmallHeatmaphAllRewardOneRobot(
+        robotNum,
+        globalVariables.smallHeatMapGridNum,
+        PlotsPart.offsetWidth,
+    );
+    const svgNode = svg.svg.node();
+    svgNode.id = 'heatmap-' + robotNum;
+    svgContainer.appendChild(svgNode);
+    svgList[robotNum] = svg;
+    svg.updatePlotOnTime();
+};
+
 const addHeatMapRobotForceSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
         svgList[robotNum].svg.remove();
@@ -1483,15 +1518,19 @@ const plotsSVGRedraw = () => {
                 for (const key in globalVariables.checkedRobots) {
                     addHeatMapRobotSVG(globalVariables.checkedRobots[key]);
                 }
-            }
-            if (metric === 'Joint Velocity') {
+            } else if (metric === 'Joint Velocity') {
                 for (const key in globalVariables.checkedRobots) {
                     addHeatMapRobotVeloSVG(globalVariables.checkedRobots[key]);
                 }
-            }
-            if (metric === 'Joint Torque') {
+            } else if (metric === 'Joint Torque') {
                 for (const key in globalVariables.checkedRobots) {
                     addHeatMapRobotForceSVG(globalVariables.checkedRobots[key]);
+                }
+            } else if (metric === 'Reward') {
+                for (const key in globalVariables.checkedRobots) {
+                    addHeatMapRobotALLRewardSVG(
+                        globalVariables.checkedRobots[key],
+                    );
                 }
             }
         } else if (groupBy === 'Joint') {
@@ -1525,6 +1564,34 @@ const plotsSVGRedraw = () => {
             if (metric === 'Joint Torque') {
                 for (const key in globalVariables.checkedObs) {
                     addHeatMapObsForceSVG(globalVariables.checkedObs[key]);
+                }
+            }
+        } else if (groupBy === 'Reward') {
+            plotsRobotOptionName.hidden = true;
+            plotsRobotControlsContainer.hidden = true;
+            for (const child of plotsRobotControlsContainer.children) {
+                child.hidden = true;
+            }
+
+            plotsLinkOptionName.hidden = true;
+            plotsLinkControlsContainer.hidden = true;
+            for (const child of plotsLinkControlsContainer.children) {
+                child.hidden = true;
+            }
+
+            plotsRewardControlsContainer.hidden = false;
+            plotsRewardOptionName.hidden = false;
+            plotsRewardOptionName.textContent = 'Plot Rewards:';
+
+            for (const child of plotsRewardControlsContainer.children) {
+                child.hidden = false;
+            }
+            globalVariables.groupByRobot = false;
+            if (metric === 'Robot') {
+                for (const key in globalVariables.checkedRewards) {
+                    addHeatMapOneRewardALLRobotSVG(
+                        globalVariables.checkedRewards[key],
+                    );
                 }
             }
         }

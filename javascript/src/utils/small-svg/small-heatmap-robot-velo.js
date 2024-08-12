@@ -1,8 +1,6 @@
 import { SmallHeatMapSVG } from './small-svg.js';
 import movementContainer from '../movement-container.js';
-import globalTimer from '../global-timer.js';
 import globalVariables from '../global-variables.js';
-import * as d3 from 'd3';
 
 export default class SmallHeatmapRobotVelo extends SmallHeatMapSVG {
 
@@ -22,16 +20,11 @@ export default class SmallHeatmapRobotVelo extends SmallHeatMapSVG {
         // get min and max values for color scale
         this.minValue = 0;
         this.maxValue = 0;
-        for (let i = 0; i < this.dataLength; i++) {
-            for (let j = 0; j < this.yLabels.length; j++) {
-                const value = parseFloat(this.originalData[i][this.yLabels[j]]);
-                if (value < this.minValue) {
-                    this.minValue = value;
-                }
-                if (value > this.maxValue) {
-                    this.maxValue = value;
-                }
-            }
+        const mins = movementContainer.getMinByRobot(this.robotNum);
+        const maxs = movementContainer.getMaxByRobot(this.robotNum);
+        for (const obsName of this.yLabels) {
+            this.minValue = Math.min(this.minValue, mins[obsName + '_angVel']);
+            this.maxValue = Math.max(this.maxValue, maxs[obsName + '_angVel']);
         }
 
         this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([

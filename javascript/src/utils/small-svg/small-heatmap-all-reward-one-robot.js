@@ -1,12 +1,13 @@
 import { SmallHeatMapSVG } from './small-svg.js';
 import movementContainer from '../movement-container.js';
 import globalVariables from '../global-variables.js';
-export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
+
+export default class SmallHeatmaphAllRewardOneRobot extends SmallHeatMapSVG {
 
     constructor(robotNum, gridNum, offsetWidth) {
         super(gridNum, offsetWidth);
         this.robotNum = robotNum;
-        this.originalData = movementContainer.getJointForce(robotNum);
+        this.originalData = movementContainer.getReward(robotNum);
         this.dataLength = this.originalData.length;
         this.id = 'small-heatmap-robot' + robotNum;
 
@@ -14,16 +15,19 @@ export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
     }
 
     setup() {
-        this.yLabels = Object.values(globalVariables.nameObsMap);
+        this.yLabels = movementContainer.getRewardLabels();
         this.gridHeight = this.height / this.yLabels.length;
+
         // get min and max values for color scale
         this.minValue = 0;
+        const allMin = movementContainer.getMinByRobot(this.robotNum);
+        for (const key of this.yLabels) {
+            this.minValue = Math.min(this.minValue, allMin[key]);
+        }
         this.maxValue = 0;
-        const mins = movementContainer.getMinByRobot(this.robotNum);
-        const maxs = movementContainer.getMaxByRobot(this.robotNum);
-        for (const obsName of this.yLabels) {
-            this.minValue = Math.min(this.minValue, mins[obsName + '_force']);
-            this.maxValue = Math.max(this.maxValue, maxs[obsName + '_force']);
+        const allMax = movementContainer.getMaxByRobot(this.robotNum);
+        for (const key of this.yLabels) {
+            this.maxValue = Math.max(this.maxValue, allMax[key]);
         }
 
         this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([
@@ -67,7 +71,6 @@ export default class SmallHeatmapRobotForce extends SmallHeatMapSVG {
                 });
             }
         });
-
         this.all_xLabels = Array.from(
             { length: this.gridNum },
             (_, i) => i * eachGridDataLength,

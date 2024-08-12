@@ -1,7 +1,5 @@
 import { SmallHeatMapSVG } from './small-svg.js';
 import movementContainer from '../movement-container.js';
-import globalTimer from '../global-timer.js';
-import * as d3 from 'd3';
 
 export default class SmallHeatmapObs extends SmallHeatMapSVG {
 
@@ -43,7 +41,7 @@ export default class SmallHeatmapObs extends SmallHeatMapSVG {
 
         for (let i = 0; i < this.yLabels.length; i++) {
             const robotNum = this.yLabels[i];
-            const data = movementContainer.getJointForce(robotNum);
+            const data = movementContainer.getMovement(robotNum);
             for (let j = 0; j < this.gridNum; j++) {
                 let sum = 0;
                 for (let k = 0; k < eachGridDataLength; k++) {
