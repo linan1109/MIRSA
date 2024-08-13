@@ -3,15 +3,16 @@ import movementContainer from '../movement-container.js';
 import globalVariables from '../global-variables.js';
 import * as d3 from 'd3';
 
-export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
+export default class GlobalHeatmapAllRewardOneRobot extends globalHeatMapSVG {
 
     constructor(robotNum, gridNum, offsetWidth, offsetHeight) {
         super(gridNum, offsetWidth, offsetHeight);
-        this.data = movementContainer.getVelocity(robotNum);
+        this.data = movementContainer.getReward(robotNum);
         this.dataLength = this.data.length;
         // use max value of data[update] as gridNum
         // this.gridNum = Math.max(...this.data.map((d) => d.update));
-        this.id = 'global-heatmap-velo-robot' + robotNum;
+        this.id = 'global-heatmap-reward-by-robot' + robotNum;
+        this.yLabels = movementContainer.getRewardLabels();
         this.createHeatmap();
     }
 

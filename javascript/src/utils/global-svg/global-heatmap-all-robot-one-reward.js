@@ -3,31 +3,44 @@ import movementContainer from '../movement-container.js';
 import globalVariables from '../global-variables.js';
 import * as d3 from 'd3';
 
-export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
+export default class GlobalHeatmapAllRobotOneReward extends globalHeatMapSVG {
 
-    constructor(robotNum, gridNum, offsetWidth, offsetHeight) {
+    constructor(rewardName, gridNum, offsetWidth, offsetHeight) {
         super(gridNum, offsetWidth, offsetHeight);
-        this.data = movementContainer.getVelocity(robotNum);
-        this.dataLength = this.data.length;
+        this.rewardName = rewardName;
+        this.dataLength = globalVariables.movementMinLen;
+        this.yLabels = movementContainer.robotNums.map(
+            (robotNum) => 'Robot ' + robotNum,
+        );
+        this.gridHeight = Math.min(
+            this.height / Math.max(this.yLabels.length, 12),
+            this.maxGridHeight,
+        );
+        this.height = this.gridHeight * this.yLabels.length;
+
+        this.initSvg();
         // use max value of data[update] as gridNum
         // this.gridNum = Math.max(...this.data.map((d) => d.update));
-        this.id = 'global-heatmap-velo-robot' + robotNum;
+        this.id = 'global-heatmap-reward' + rewardName;
         this.createHeatmap();
     }
 
     processData() {
-        const dataLength = this.data.length;
-        const eachGridDataLength = Math.floor(dataLength / this.gridNum);
+        const eachGridDataLength = Math.floor(this.dataLength / this.gridNum);
         const processedData = [];
         const yLabelOrder = {};
         let maxVelocity = 0;
         let minVelocity = 0;
 
-        this.yLabels.forEach((measurement, i) => {
+        for (let i = 0; i < this.yLabels.length; i++) {
+            const robotNum = parseInt(this.yLabels[i].split(' ')[1]);
+            const data = movementContainer.getReward(robotNum);
             for (let j = 0; j < this.gridNum; j++) {
                 let sum = 0;
                 for (let k = 0; k < eachGridDataLength; k++) {
-                    const v = parseFloat(this.data[j * eachGridDataLength + k][measurement]);
+                    const v = parseFloat(
+                        data[j * eachGridDataLength + k][this.rewardName],
+                    );
                     sum += v;
                     maxVelocity = Math.max(maxVelocity, v);
                     minVelocity = Math.min(minVelocity, v);
@@ -39,13 +52,20 @@ export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
                     value: value,
                 });
             }
-            yLabelOrder[measurement] = i;
-        });
+            yLabelOrder[this.yLabels[i]] = i;
+        }
 
+        this.all_xLabels = Array.from(
+            { length: this.gridNum },
+            (_, i) => i * eachGridDataLength,
+        );
         this.yLabelOrder = yLabelOrder;
-        this.maxVelocity = maxVelocity;
         this.minVelocity = minVelocity;
-        this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([ minVelocity, maxVelocity ]);
+        this.maxVelocity = maxVelocity;
+        this.colorScale = globalVariables.HeatmapColorScaleForALL.domain([
+            minVelocity,
+            maxVelocity,
+        ]);
         this.sendChangeEvent();
         return processedData;
     }
@@ -89,7 +109,6 @@ export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
                 .attr('y', this.height + 35)
                 .style('text-anchor', 'middle');
         }
-
     }
 
     addRectLegend() {
@@ -124,7 +143,6 @@ export default class GlobalHeatmapVeloRobot extends globalHeatMapSVG {
         legend.exit().remove();
     }
 
-    // functions inherite
     createHeatmap() {
         this.data = this.processData();
         // const numXLables = Math.floor(this.gridNum / 10);

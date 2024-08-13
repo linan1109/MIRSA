@@ -37,6 +37,8 @@ import {
     GlobalHeatmapRobot,
     GlobalHeatmapVeloRobot,
     GlobalHeatmapVelocityObs,
+    GlobalHeatmapAllRobotOneReward,
+    GlobalHeatmapAllRewardOneRobot,
     GlobalLineChartObs,
     GlobalLineChartRobot,
     GlobalLineChartObsVelo,
@@ -123,6 +125,9 @@ const globalHeatmapSelection = document.getElementById(
 );
 const globalPlotSelectionMetric = document.getElementById(
     'global-plot-selection-metric',
+);
+const globalPlotSelectionMetricLabel = document.getElementById(
+    'global-plot-selection-metric-label',
 );
 const globalPlotSelectionGroupBy = document.getElementById(
     'global-plot-selection-groupby',
@@ -942,10 +947,7 @@ const addLineChartRewardOneRobot = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
         svgList[robotNum].svg.remove();
     }
-    const svg = new SmallLineChartReward(
-        robotNum,
-        PlotsPart.offsetWidth,
-    );
+    const svg = new SmallLineChartReward(robotNum, PlotsPart.offsetWidth);
     const svgNode = svg.svg.node();
     svgNode.id = 'plot-all' + robotNum;
     svgContainer.appendChild(svgNode);
@@ -1122,6 +1124,38 @@ const changeGlobalPlotToLineRobotForce = (robotNum) => {
     globalHeatmapContainer.appendChild(svgNode);
 };
 
+const changeGlobalPlotToHeatmapOneRobotAllReward = (robotNum) => {
+    while (globalHeatmapContainer.firstChild) {
+        globalHeatmapContainer.removeChild(globalHeatmapContainer.firstChild);
+        globalHeatmapSvg = null;
+    }
+    const svg = new GlobalHeatmapAllRewardOneRobot(
+        robotNum,
+        globalVariables.globalHeatMapGridNum,
+        globalPlotPart.offsetWidth,
+        globalPlotPart.offsetHeight,
+    );
+    const svgNode = svg.svg.node();
+    globalHeatmapSvg = svg;
+    globalHeatmapContainer.appendChild(svgNode);
+};
+
+const changeGlobalPlotToHeatmapOneRewardAllRobot = (rewardName) => {
+    while (globalHeatmapContainer.firstChild) {
+        globalHeatmapContainer.removeChild(globalHeatmapContainer.firstChild);
+        globalHeatmapSvg = null;
+    }
+    const svg = new GlobalHeatmapAllRobotOneReward(
+        rewardName,
+        globalVariables.globalHeatMapGridNum,
+        globalPlotPart.offsetWidth,
+        globalPlotPart.offsetHeight,
+    );
+    const svgNode = svg.svg.node();
+    globalHeatmapSvg = svg;
+    globalHeatmapContainer.appendChild(svgNode);
+};
+
 const changeGlobalPlotToLineOneRewardAllRobot = (rewardName) => {
     while (globalHeatmapContainer.firstChild) {
         globalHeatmapContainer.removeChild(globalHeatmapContainer.firstChild);
@@ -1285,6 +1319,10 @@ const changeGlobalPlot = (num, type = null) => {
         changeGlobalPlotToHeatmapForceRobot(num);
     } else if (type === 'Heat MapJointJoint Torque') {
         changeGlobalPlotToHeatmapForceObs(num);
+    } else if (type === 'Heat MapRewardRobot') {
+        changeGlobalPlotToHeatmapOneRewardAllRobot(num);
+    } else if (type === 'Heat MapRobotReward') {
+        changeGlobalPlotToHeatmapOneRobotAllReward(num);
     } else if (type === 'Line ChartJointJoint Velocity') {
         changeGlobalPlotToLineObsVelo(num);
     } else if (type === 'Line ChartJointJoint Torque') {
@@ -1668,6 +1706,15 @@ const globalHeatmapRedraw = () => {
         globalPlotSelectionGroupBy.value +
         globalPlotSelectionMetric.value;
 
+    console.log('globalHeatmapRedraw', option);
+    if (globalPlotSelectionMetric.options.length <= 1) {
+        globalPlotSelectionMetric.hidden = true;
+        globalPlotSelectionMetricLabel.hidden = true;
+    } else {
+        globalPlotSelectionMetric.hidden = false;
+        globalPlotSelectionMetricLabel.hidden = false;
+    }
+
     if (globalPlotSelectionGroupBy.value === 'Robot') {
         // add options for robots
         for (const key in movementContainer.movementDict) {
@@ -1694,18 +1741,18 @@ const globalHeatmapRedraw = () => {
 };
 
 smallPlotSeletionPlot.addEventListener('change', () => {
-    const value = smallPlotSeletionPlot.value;
-    const groupByOptions = Object.keys(
-        globalVariables.globalPlotSelections[value],
-    );
-    while (smallPlotSelectionGroupBy.firstChild) {
-        smallPlotSelectionGroupBy.removeChild(
-            smallPlotSelectionGroupBy.firstChild,
-        );
-    }
-    for (const option of groupByOptions) {
-        addSelectionToElement(smallPlotSelectionGroupBy, option);
-    }
+    // const value = smallPlotSeletionPlot.value;
+    // const groupByOptions = Object.keys(
+    //     globalVariables.globalPlotSelections[value],
+    // );
+    // while (smallPlotSelectionGroupBy.firstChild) {
+    //     smallPlotSelectionGroupBy.removeChild(
+    //         smallPlotSelectionGroupBy.firstChild,
+    //     );
+    // }
+    // for (const option of groupByOptions) {
+    //     addSelectionToElement(smallPlotSelectionGroupBy, option);
+    // }
     plotsSVGRedraw();
 });
 smallPlotSelectionGroupBy.addEventListener('change', () => {
@@ -1736,18 +1783,18 @@ const addSelectionToElement = (selectElement, option) => {
 };
 
 globalPlotSelectionPlot.addEventListener('change', () => {
-    const value = globalPlotSelectionPlot.value;
-    const groupByOptions = Object.keys(
-        globalVariables.globalPlotSelections[value],
-    );
-    while (globalPlotSelectionGroupBy.firstChild) {
-        globalPlotSelectionGroupBy.removeChild(
-            globalPlotSelectionGroupBy.firstChild,
-        );
-    }
-    for (const option of groupByOptions) {
-        addSelectionToElement(globalPlotSelectionGroupBy, option);
-    }
+    // const value = globalPlotSelectionPlot.value;
+    // const groupByOptions = Object.keys(
+    //     globalVariables.globalPlotSelections[value],
+    // );
+    // while (globalPlotSelectionGroupBy.firstChild) {
+    //     globalPlotSelectionGroupBy.removeChild(
+    //         globalPlotSelectionGroupBy.firstChild,
+    //     );
+    // }
+    // for (const option of groupByOptions) {
+    //     addSelectionToElement(globalPlotSelectionGroupBy, option);
+    // }
     globalHeatmapRedraw();
 });
 globalPlotSelectionGroupBy.addEventListener('change', () => {

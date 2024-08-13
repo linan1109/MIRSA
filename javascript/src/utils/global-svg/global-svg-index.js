@@ -4,6 +4,8 @@ import GlobalHeatmapObs from './global-heatmap-obs';
 import GlobalHeatmapRobot from './global-heatmap-robot';
 import GlobalHeatmapVeloRobot from './global-heatmap-velo-robot';
 import GlobalHeatmapVelocityObs from './global-heatmap-velo-obs';
+import GlobalHeatmapAllRobotOneReward from './global-heatmap-all-robot-one-reward';
+import GlobalHeatmapAllRewardOneRobot from './global-heatmap-one-robot-all-reward';
 
 import GlobalLineChartObs from './global-linechart-obs';
 import GlobalLineChartRobot from './global-linechart-robot';
@@ -23,6 +25,8 @@ export {
     GlobalHeatmapRobot,
     GlobalHeatmapVeloRobot,
     GlobalHeatmapVelocityObs,
+    GlobalHeatmapAllRobotOneReward,
+    GlobalHeatmapAllRewardOneRobot,
     GlobalLineChartObs,
     GlobalLineChartRobot,
     GlobalLineChartObsVelo,

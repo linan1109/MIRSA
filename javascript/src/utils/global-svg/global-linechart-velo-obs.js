@@ -37,7 +37,7 @@ export default class GlobalLineChartObsVelo extends GlobalLineChartSVG {
 
         this.points = [];
         for (const key of movementContainer.robotNums) {
-            const movement = movementContainer.getMovement(key);
+            const movement = movementContainer.getVelocity(key);
             this.points = this.points.concat(
                 this.all_x.map((d, i) => [
                     this.xScale(d),
