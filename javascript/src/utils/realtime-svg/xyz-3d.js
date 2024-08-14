@@ -118,28 +118,28 @@ export default class XYZ3D {
                 // make the hovered axis thicker
                 if (this.hoveredAxis === 'xAxis') {
                     this.xAxis.material.color = new THREE.Color('black');
-                    this.yAxis.material.color = new THREE.Color(0x00ff00);
-                    this.zAxis.material.color = new THREE.Color(0x0000ff);
-                    return;
-                }
-                if (this.hoveredAxis === 'yAxis') {
-                    this.yAxis.material.color = new THREE.Color('black');
-                    this.xAxis.material.color = new THREE.Color(0xff0000);
-                    this.zAxis.material.color = new THREE.Color(0x0000ff);
+                    this.zAxis.material.color = new THREE.Color(0x00ff00);
+                    this.yAxis.material.color = new THREE.Color(0x0000ff);
                     return;
                 }
                 if (this.hoveredAxis === 'zAxis') {
                     this.zAxis.material.color = new THREE.Color('black');
                     this.xAxis.material.color = new THREE.Color(0xff0000);
-                    this.yAxis.material.color = new THREE.Color(0x00ff00);
+                    this.yAxis.material.color = new THREE.Color(0x0000ff);
+                    return;
+                }
+                if (this.hoveredAxis === 'yAxis') {
+                    this.yAxis.material.color = new THREE.Color('black');
+                    this.xAxis.material.color = new THREE.Color(0xff0000);
+                    this.zAxis.material.color = new THREE.Color(0x00ff00);
                     return;
                 }
             }
         }
         this.hoveredAxis = null;
         this.xAxis.material.color = new THREE.Color(0xff0000);
-        this.yAxis.material.color = new THREE.Color(0x00ff00);
-        this.zAxis.material.color = new THREE.Color(0x0000ff);
+        this.zAxis.material.color = new THREE.Color(0x00ff00);
+        this.yAxis.material.color = new THREE.Color(0x0000ff);
     }
 
     clickOnSimulatorAxis(axis) {
@@ -153,7 +153,7 @@ export default class XYZ3D {
                 // set camera to x axis
                 this.camera.position.set(20, 5, 5);
                 this.camera.lookAt(0, 5, 5);
-                this.camera.up.set(0, 1, 0);
+                // this.camera.up.set(0, 1, 0);
                 this.camera.zoom = 0.8;
                 this.camera.updateProjectionMatrix();
                 this.controls.target.set(0, 5, 5);
@@ -166,7 +166,7 @@ export default class XYZ3D {
                 // set camera to y axis
                 this.camera.position.set(5, 20, 5);
                 this.camera.lookAt(5, 0, 5);
-                this.camera.up.set(0, 0, 1);
+                // this.camera.up.set(0, 0, -1);
                 this.camera.zoom = 0.8;
                 this.camera.updateProjectionMatrix();
                 this.controls.target.set(5, 0, 5);
@@ -179,7 +179,7 @@ export default class XYZ3D {
                 // set camera to z axis
                 this.camera.position.set(5, 5, 20);
                 this.camera.lookAt(5, 5, 0);
-                this.camera.up.set(0, 1, 0);
+                // this.camera.up.set(0, 1, 0);
                 this.camera.zoom = 0.8;
                 this.camera.updateProjectionMatrix();
                 this.controls.target.set(5, 5, 0);
@@ -233,31 +233,31 @@ export default class XYZ3D {
         const xAxis = new THREE.Line(xAxisGeometry, xAxisMaterial);
         xAxis.name = 'xAxis';
 
-        // Y axis - Green
-        const yAxisGeometry = new THREE.BufferGeometry().setFromPoints([
+        // Z axis - Green
+        const zAxisGeometry = new THREE.BufferGeometry().setFromPoints([
             new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(0, lengthAllGrids * 1.1, 0),
         ]);
-        const yAxisMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
-        const yAxis = new THREE.Line(yAxisGeometry, yAxisMaterial);
-        yAxis.name = 'yAxis';
-
-        // Z axis - Blue
-        const zAxisGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(0, 0, 0),
-            new THREE.Vector3(0, 0, lengthAllGrids * 1.1),
-        ]);
-        const zAxisMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        const zAxisMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
         const zAxis = new THREE.Line(zAxisGeometry, zAxisMaterial);
         zAxis.name = 'zAxis';
 
+        // Y axis - Blue
+        const yAxisGeometry = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(0, 0, lengthAllGrids * 1.1),
+        ]);
+        const yAxisMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        const yAxis = new THREE.Line(yAxisGeometry, yAxisMaterial);
+        yAxis.name = 'yAxis';
+
         this.scene.add(xAxis);
-        this.scene.add(yAxis);
         this.scene.add(zAxis);
+        this.scene.add(yAxis);
 
         this.xAxis = xAxis;
-        this.yAxis = yAxis;
         this.zAxis = zAxis;
+        this.yAxis = yAxis;
     }
 
     addGrids() {
@@ -342,7 +342,7 @@ export default class XYZ3D {
                     this.scene.add(meshx);
 
                     const y = (i / 5) * (this.yMax * 2) - this.yMax;
-                    const meshy = new THREE.Mesh(
+                    const meshz = new THREE.Mesh(
                         new TextGeometry(`${ y.toFixed(2) }`, {
                             font: font,
                             size: 0.35,
@@ -350,16 +350,16 @@ export default class XYZ3D {
                         }),
                         this.fontMaterial,
                     );
-                    meshy.position.set(
+                    meshz.position.set(
                         (-0.5 * lengthAllGrids) / numGrids,
                         ((y + this.yMax) * lengthAllGrids) / (this.yMax * 2),
                         lengthAllGrids * 1.1,
                     );
-                    meshy.quaternion.copy(this.camera.quaternion);
-                    this.scene.add(meshy);
+                    meshz.quaternion.copy(this.camera.quaternion);
+                    this.scene.add(meshz);
 
                     const z = (i / 5) * (this.zMax * 2) - this.zMax;
-                    const meshz = new THREE.Mesh(
+                    const meshy = new THREE.Mesh(
                         new TextGeometry(`${ z.toFixed(2) }`, {
                             font: font,
                             size: 0.35,
@@ -367,17 +367,17 @@ export default class XYZ3D {
                         }),
                         this.fontMaterial,
                     );
-                    meshz.position.set(
+                    meshy.position.set(
                         lengthAllGrids * 1.1,
                         (-0.5 * lengthAllGrids) / numGrids,
                         ((z + this.zMax) * lengthAllGrids) / (this.zMax * 2),
                     );
-                    meshz.quaternion.copy(this.camera.quaternion);
-                    this.scene.add(meshz);
+                    meshy.quaternion.copy(this.camera.quaternion);
+                    this.scene.add(meshy);
 
                     this.xMeshs.push(meshx);
-                    this.yMeshs.push(meshy);
-                    this.zMeshs.push(meshz);
+                    this.yMeshs.push(meshz);
+                    this.zMeshs.push(meshy);
                 }
 
                 const meshx = new THREE.Mesh(
@@ -397,23 +397,6 @@ export default class XYZ3D {
                 meshx.quaternion.copy(this.camera.quaternion);
                 this.xMeshs.push(meshx);
 
-                const meshy = new THREE.Mesh(
-                    new TextGeometry('Y', {
-                        font: font,
-                        size: 0.35,
-                        height: 0.1,
-                    }),
-                    this.fontMaterial,
-                );
-                meshy.position.set(
-                    (-0.5 * lengthAllGrids) / numGrids,
-                    lengthAllGrids * 1.05,
-                    lengthAllGrids * 1.1,
-                );
-                this.scene.add(meshy);
-                meshy.quaternion.copy(this.camera.quaternion);
-                this.yMeshs.push(meshy);
-
                 const meshz = new THREE.Mesh(
                     new TextGeometry('Z', {
                         font: font,
@@ -423,13 +406,30 @@ export default class XYZ3D {
                     this.fontMaterial,
                 );
                 meshz.position.set(
+                    (-0.5 * lengthAllGrids) / numGrids,
+                    lengthAllGrids * 1.05,
+                    lengthAllGrids * 1.1,
+                );
+                this.scene.add(meshz);
+                meshz.quaternion.copy(this.camera.quaternion);
+                this.yMeshs.push(meshz);
+
+                const meshy = new THREE.Mesh(
+                    new TextGeometry('Y', {
+                        font: font,
+                        size: 0.35,
+                        height: 0.1,
+                    }),
+                    this.fontMaterial,
+                );
+                meshy.position.set(
                     lengthAllGrids * 1.1,
                     (-0.5 * lengthAllGrids) / numGrids,
                     lengthAllGrids * 1.05,
                 );
-                this.scene.add(meshz);
-                meshz.quaternion.copy(this.camera.quaternion);
-                this.zMeshs.push(meshz);
+                this.scene.add(meshy);
+                meshy.quaternion.copy(this.camera.quaternion);
+                this.zMeshs.push(meshy);
             },
         );
     }

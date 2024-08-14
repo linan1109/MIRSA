@@ -80,7 +80,7 @@ const lockPositionButtonTooltip = document.getElementById(
 );
 // const radiansToggle = document.getElementById('radians-toggle');
 // const autocenterToggle = document.getElementById('autocenter-toggle');
-const upSelect = document.getElementById('up-select');
+// const upSelect = document.getElementById('up-select');
 // const sliderList = document.querySelector('#controls ul');
 const controlsel = document.getElementById('controls');
 const controlsToggle = document.getElementById('toggle-controls');
@@ -474,13 +474,6 @@ function createRobotControls(robotNumber) {
         <button id="robot${ robotNumber }-delete" class="beautful-button">Delete</button>
         <div id="robot${ robotNumber }-visible" class="toggle checked robot-control">Visible</div>
         <div id="robot${ robotNumber }-highlight" class="toggle robot-control">Highlight</div>
-        <div class="init-position">
-            Init Pos. (
-            <input id="robot${ robotNumber }-positionx" type="number" class="position-input" value="0" step="0.1"/>, 
-            <input id="robot${ robotNumber }-positiony" type="number" class="position-input" value="${ robotNumber }" step="0.1"/>, 
-            <input id="robot${ robotNumber }-positionz" type="number" class="position-input" value="0" step="0.1"/>
-            )
-        </div>
         <div id="robot${ robotNumber }-file-name" style="font-size:12px;padding-top: 2px;"> </div>
     </div>
     `;
@@ -600,11 +593,6 @@ const addListenerToNewRobot = (robotNumber) => {
         `robot${ robotNumber }-highlight`,
     );
     const loadMovement = document.getElementById(`load-movement${ robotNumber }`);
-    const initialPosition = {
-        x: document.getElementById(`robot${ robotNumber }-positionx`),
-        y: document.getElementById(`robot${ robotNumber }-positiony`),
-        z: document.getElementById(`robot${ robotNumber }-positionz`),
-    };
     const deleteButton = document.getElementById(`robot${ robotNumber }-delete`);
 
     robotControlsToggle.addEventListener('click', () => {
@@ -679,14 +667,14 @@ const addListenerToNewRobot = (robotNumber) => {
         globalHeatmapRedraw();
     });
 
-    Object.values(initialPosition).forEach((input, index) => {
-        // init values
-        input.value = viewer.getRobotInitPosition(robotNumber, index);
-        input.addEventListener('change', () => {
-            const position = parseFloat(input.value);
-            viewer.setRobotInitPosition(robotNumber, index, position);
-        });
-    });
+    // Object.values(initialPosition).forEach((input, index) => {
+    //     // init values
+    //     input.value = viewer.getRobotInitPosition(robotNumber, index);
+    //     input.addEventListener('change', () => {
+    //         const position = parseFloat(input.value);
+    //         viewer.setRobotInitPosition(robotNumber, index, position);
+    //     });
+    // });
 };
 
 // slider part
@@ -870,14 +858,14 @@ const loadMovementFromCSV = (robotNum) => {
         console.log('Start index:' + globalVariables.movementIndexStart);
 
         // use the first movement as offset, decuct the offset from all the movements
-        // if (globalVariables.useOffset) {
-        //     const offset = movement[0];
-        //     for (let i = 0; i < movementLength; i++) {
-        //         for (const key in movement[i]) {
-        //             movement[i][key] -= offset[key];
-        //         }
-        //     }
-        // }
+        if (globalVariables.useOffset) {
+            const offset = movement[0];
+            for (let i = 0; i < movementLength; i++) {
+                for (const key in movement[i]) {
+                    movement[i][key] -= offset[key];
+                }
+            }
+        }
 
         if (movementContainer.hasMovement(robotNum)) {
             movementContainer.removeMovement(robotNum);
@@ -1498,7 +1486,7 @@ document.addEventListener('global-map-brushed', (e) => {
     // }
 });
 
-upSelect.addEventListener('change', () => (viewer.up = upSelect.value));
+// upSelect.addEventListener('change', () => (viewer.up = upSelect.value));
 
 const plotsSVGRedraw = () => {
     while (svgContainer.firstChild) {
@@ -2020,7 +2008,7 @@ const updateList = () => {
             const color = e.target.getAttribute('color');
 
             viewer.up = '+Z';
-            document.getElementById('up-select').value = viewer.up;
+            // document.getElementById('up-select').value = viewer.up;
             viewer.urdf = urdf;
             // animToggle.classList.add('checked');
             setColor(color);

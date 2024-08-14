@@ -3,7 +3,6 @@ import { MeshPhongMaterial } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { AxesScene } from './three-related/axes-scene.js';
 import URDFLoader from './URDFLoader.js';
-import globalVariables from './utils/global-variables.js';
 import { PointTrajectory } from './three-related/trajectory.js';
 import globalTimer from './utils/global-timer.js';
 // import { index, timeout } from 'd3';
@@ -332,13 +331,13 @@ export default class URDFViewer extends HTMLElement {
         });
         this.renderer.domElement.addEventListener('axis-click', (e) => {
             if (e.detail === 'xAxis') {
-                this.changeCameraPosition(2, 0, 0);
+                this.changeCameraPosition(new THREE.Vector3(2, 0, 0));
             }
             if (e.detail === 'yAxis') {
-                this.changeCameraPosition(0, 2, 0);
+                this.changeCameraPosition(new THREE.Vector3(0, 2, 0));
             }
             if (e.detail === 'zAxis') {
-                this.changeCameraPosition(0, 0, 2);
+                this.changeCameraPosition(new THREE.Vector3(0, 0, 2));
             }
 
             const newEvent = new CustomEvent('axis-click', {
@@ -402,8 +401,20 @@ export default class URDFViewer extends HTMLElement {
         requestAnimationFrame(() => this.updateSize());
     }
 
-    changeCameraPosition(x, y, z) {
-        this.camera.position.set(x, y, z);
+    changeCameraPosition(direction) {
+        const distance = 2;
+        const zOffset = 0.5;
+        const adjustedDirection = direction.clone();
+        if (direction.y !== 0) {
+            adjustedDirection.y -= zOffset;
+        }
+        const cameraPosition = adjustedDirection.multiplyScalar(distance);
+
+        this.controls.target.set(0, 0, 0);
+        this.camera.position.copy(cameraPosition);
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.camera.updateProjectionMatrix();
+        this.controls.update();
         this.redraw();
     }
 
@@ -842,7 +853,7 @@ export default class URDFViewer extends HTMLElement {
             });
 
             const center = bbox.getCenter(new THREE.Vector3());
-            this.controls.target.y = center.y;
+            // this.controls.target.y = center.y;
             this.plane.position.y = bbox.min.y - 1e-3;
             this.shadowPlane.position.y = this.plane.position.y;
 

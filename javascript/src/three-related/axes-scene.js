@@ -70,7 +70,13 @@ export class AxesScene {
 
     render(camera) {
         this.camera.rotation.copy(camera.rotation);
-        this.camera.position.copy(camera.position);
+        // this.camera.position.copy(camera.position);
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection(direction);
+
+        const fixedDistance = 2;
+        this.camera.position.copy(direction.multiplyScalar(-fixedDistance));
+        this.camera.updateProjectionMatrix();
 
         // render the axes scene as an overlay
         this.renderer.autoClear = false;
@@ -156,6 +162,5 @@ export class AxesScene {
             this.renderer.domElement.dispatchEvent(event);
         }
     }
-    
 
 }
