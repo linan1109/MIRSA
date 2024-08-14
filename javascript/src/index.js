@@ -72,8 +72,12 @@ const wireframeToggle = document.getElementById('wireframe-toggle');
 const snapShotButton = document.getElementById('snap-shot-button');
 const snapshotContainer = document.getElementById('snapshot-container');
 const lockPositionButton = document.getElementById('lock-position-button');
-const lockPositionButtonIcon = document.getElementById('lock-position-button-i');
-const lockPositionButtonTooltip = document.getElementById('lock-position-button-tooltip-text');
+const lockPositionButtonIcon = document.getElementById(
+    'lock-position-button-i',
+);
+const lockPositionButtonTooltip = document.getElementById(
+    'lock-position-button-tooltip-text',
+);
 // const radiansToggle = document.getElementById('radians-toggle');
 // const autocenterToggle = document.getElementById('autocenter-toggle');
 const upSelect = document.getElementById('up-select');
@@ -106,6 +110,9 @@ const smallPlotSelectionMetricLabel = document.getElementById(
 );
 const smallPlotSelectionGroupBy = document.getElementById(
     'small-plot-selection-groupby',
+);
+const smallPlotSelectionSelect = document.getElementById(
+    'small-plot-selection-select',
 );
 
 const plotsLinkOptionName = document.getElementById('plots-link-option-name');
@@ -496,6 +503,39 @@ function createRobotControls(robotNumber) {
     });
 }
 
+const addNewRobotOptionToSmallPlotSelectionSelect = (robotNum) => {
+    // if already exists, return
+    if (smallPlotSelectionSelect.querySelector(`option[value='${ robotNum }']`)) {
+        return;
+    }
+    const option = document.createElement('option');
+    option.value = robotNum;
+    option.textContent = `Robot ${ robotNum }`;
+    smallPlotSelectionSelect.appendChild(option);
+};
+
+const addNewObsOptionToSmallPlotSelectionSelect = (obsName) => {
+    // if already exists, return
+    if (smallPlotSelectionSelect.querySelector(`option[value='${ obsName }']`)) {
+        return;
+    }
+    const option = document.createElement('option');
+    option.value = obsName;
+    option.textContent = obsName;
+    smallPlotSelectionSelect.appendChild(option);
+};
+
+const addNewRewardOptionToSmallPlotSelectionSelect = (rewardName) => {
+    // if already exists, return
+    if (smallPlotSelectionSelect.querySelector(`option[value='${ rewardName }`)) {
+        return;
+    }
+    const option = document.createElement('option');
+    option.value = rewardName;
+    option.textContent = rewardName;
+    smallPlotSelectionSelect.appendChild(option);
+};
+
 const addNewRobotOptionToGlobalHeatmapSelection = (robotNum) => {
     // if already exists, return
     if (globalHeatmapSelection.querySelector(`option[value='${ robotNum }']`)) {
@@ -830,19 +870,14 @@ const loadMovementFromCSV = (robotNum) => {
         console.log('Start index:' + globalVariables.movementIndexStart);
 
         // use the first movement as offset, decuct the offset from all the movements
-
-        console.log('Offset:');
-        console.log(movement[0]);
-        if (globalVariables.useOffset) {
-            const offset = movement[0];
-            console.log('Offset:');
-            console.log(offset);
-            for (let i = 0; i < movementLength; i++) {
-                for (const key in movement[i]) {
-                    movement[i][key] -= offset[key];
-                }
-            }
-        }
+        // if (globalVariables.useOffset) {
+        //     const offset = movement[0];
+        //     for (let i = 0; i < movementLength; i++) {
+        //         for (const key in movement[i]) {
+        //             movement[i][key] -= offset[key];
+        //         }
+        //     }
+        // }
 
         if (movementContainer.hasMovement(robotNum)) {
             movementContainer.removeMovement(robotNum);
@@ -889,8 +924,12 @@ const loadMovementFromCSV = (robotNum) => {
         if (globalPlotSelectionGroupBy.value === 'Robot') {
             addNewRobotOptionToGlobalHeatmapSelection(robotNum);
         }
+        if (smallPlotSelectionGroupBy.value === 'Robot') {
+            addNewRobotOptionToSmallPlotSelectionSelect(robotNum);
+        }
 
         // update the svg
+        smallPlotSeletionChanged();
         plotsSVGRedraw();
         globalHeatmapRedraw();
 
@@ -1299,7 +1338,6 @@ const changeGlobalPlotToHeatmapForceObs = (obsName) => {
 };
 
 const changeGlobalPlot = (num, type = null) => {
-    console.log('changeGlobalPlot to ' + num);
     if (type === null) {
         type =
             globalPlotSelectionPlot.value +
@@ -1469,40 +1507,17 @@ const plotsSVGRedraw = () => {
     const plotType = smallPlotSeletionPlot.value;
     const groupBy = smallPlotSelectionGroupBy.value;
     const metric = smallPlotSelectionMetric.value;
-
+    const selected = smallPlotSelectionSelect.value;
+    console.log(selected);
     // const type = plotType + groupBy + metric;
     if (plotType === 'Line Chart') {
         if (groupBy === 'Robot') {
-            plotsLinkOptionName.textContent = 'Highlight Options:';
-            plotsRobotOptionName.textContent = 'Plot Robots:';
-            plotsRobotOptionName.hidden = false;
-            plotsRobotControlsContainer.hidden = false;
-            for (const child of plotsRobotControlsContainer.children) {
-                child.hidden = false;
-            }
-            plotsLinkOptionName.hidden = false;
-            plotsLinkControlsContainer.hidden = false;
-            for (const child of plotsLinkControlsContainer.children) {
-                child.hidden = false;
-            }
-            plotsRewardControlsContainer.hidden = true;
-            plotsRewardOptionName.hidden = true;
-            for (const child of plotsRewardControlsContainer.children) {
-                child.hidden = true;
-            }
-            globalVariables.groupByRobot = true;
             if (metric === 'Joint Position') {
-                for (const key in globalVariables.checkedRobots) {
-                    addRobotSVG(globalVariables.checkedRobots[key]);
-                }
+                addRobotSVG(selected);
             } else if (metric === 'Joint Velocity') {
-                for (const key in globalVariables.checkedRobots) {
-                    addLineRobotVeloSVG(globalVariables.checkedRobots[key]);
-                }
+                addLineRobotVeloSVG(selected);
             } else if (metric === 'Joint Torque') {
-                for (const key in globalVariables.checkedRobots) {
-                    addLineRobotForceSVG(globalVariables.checkedRobots[key]);
-                }
+                addLineRobotForceSVG(selected);
             } else if (metric === 'Reward') {
                 plotsRewardControlsContainer.hidden = false;
                 plotsRewardOptionName.hidden = false;
@@ -1515,186 +1530,59 @@ const plotsSVGRedraw = () => {
                 for (const child of plotsLinkControlsContainer.children) {
                     child.hidden = true;
                 }
-                for (const key in globalVariables.checkedRobots) {
-                    addLineChartRewardOneRobot(
-                        globalVariables.checkedRobots[key],
-                    );
-                }
+                addLineChartRewardOneRobot(selected);
             }
         } else if (groupBy === 'Joint') {
-            plotsLinkOptionName.textContent = 'Plot Joints:';
-            plotsRobotOptionName.textContent = 'Highlight Robots:';
-
-            plotsLinkOptionName.hidden = false;
-            plotsRobotOptionName.hidden = false;
-            plotsRobotControlsContainer.hidden = false;
-            plotsLinkControlsContainer.hidden = false;
-            for (const child of plotsRobotControlsContainer.children) {
-                child.hidden = false;
-            }
-            for (const child of plotsLinkControlsContainer.children) {
-                child.hidden = false;
-            }
-            plotsRewardControlsContainer.hidden = true;
-            plotsRewardOptionName.hidden = true;
-            for (const child of plotsRewardControlsContainer.children) {
-                child.hidden = true;
-            }
-
-            globalVariables.groupByRobot = false;
             if (metric === 'Joint Position') {
-                for (const key in globalVariables.checkedObs) {
-                    addObsSVG(globalVariables.checkedObs[key]);
-                }
+                addObsSVG(selected);
             }
             if (metric === 'Joint Velocity') {
-                for (const key in globalVariables.checkedObs) {
-                    addLineObsVeloSVG(globalVariables.checkedObs[key]);
-                }
+                addLineObsVeloSVG(selected);
             }
             if (metric === 'Joint Torque') {
-                for (const key in globalVariables.checkedObs) {
-                    addLineObsForceSVG(globalVariables.checkedObs[key]);
-                }
+                addLineObsForceSVG(selected);
             }
         } else if (groupBy === 'Reward') {
-            plotsRobotOptionName.hidden = false;
-            plotsRobotOptionName.textContent = 'Highlight Robots:';
-            plotsRobotControlsContainer.hidden = false;
-            for (const child of plotsRobotControlsContainer.children) {
-                child.hidden = false;
-            }
-
-            plotsLinkOptionName.hidden = true;
-            plotsLinkControlsContainer.hidden = true;
-            for (const child of plotsLinkControlsContainer.children) {
-                child.hidden = true;
-            }
-
-            plotsRewardControlsContainer.hidden = false;
-            plotsRewardOptionName.hidden = false;
-            plotsRewardOptionName.textContent = 'Plot Rewards:';
-
-            for (const child of plotsRewardControlsContainer.children) {
-                child.hidden = false;
-            }
-            globalVariables.groupByRobot = false;
             if (metric === 'Robot') {
-                for (const key in globalVariables.checkedRewards) {
-                    addLineChartOneReward(globalVariables.checkedRewards[key]);
-                }
+                addLineChartOneReward(selected);
             }
         }
     } else if (plotType === 'Heat Map') {
         if (groupBy === 'Robot') {
-            plotsRobotOptionName.textContent = 'Plot Robots:';
-            plotsLinkOptionName.hidden = true;
-            plotsRobotOptionName.hidden = false;
-            plotsRobotControlsContainer.hidden = false;
-            plotsLinkControlsContainer.hidden = true;
-            for (const child of plotsRobotControlsContainer.children) {
-                child.hidden = false;
-            }
-            for (const child of plotsLinkControlsContainer.children) {
-                child.hidden = true;
-            }
-            plotsRewardControlsContainer.hidden = true;
-            plotsRewardOptionName.hidden = true;
-            for (const child of plotsRewardControlsContainer.children) {
-                child.hidden = true;
-            }
-            globalVariables.groupByRobot = true;
             if (metric === 'Joint Position') {
-                for (const key in globalVariables.checkedRobots) {
-                    addHeatMapRobotSVG(globalVariables.checkedRobots[key]);
-                }
+                addHeatMapRobotSVG(selected);
             } else if (metric === 'Joint Velocity') {
-                for (const key in globalVariables.checkedRobots) {
-                    addHeatMapRobotVeloSVG(globalVariables.checkedRobots[key]);
-                }
+                addHeatMapRobotVeloSVG(selected);
             } else if (metric === 'Joint Torque') {
-                for (const key in globalVariables.checkedRobots) {
-                    addHeatMapRobotForceSVG(globalVariables.checkedRobots[key]);
-                }
+                addHeatMapRobotForceSVG(selected);
             } else if (metric === 'Reward') {
-                for (const key in globalVariables.checkedRobots) {
-                    addHeatMapRobotALLRewardSVG(
-                        globalVariables.checkedRobots[key],
-                    );
-                }
+                addHeatMapRobotALLRewardSVG(selected);
             }
         } else if (groupBy === 'Joint') {
-            plotsLinkOptionName.textContent = 'Plot Joints:';
-            plotsLinkOptionName.hidden = false;
-            plotsRobotOptionName.hidden = true;
-            plotsRobotControlsContainer.hidden = true;
-            plotsLinkControlsContainer.hidden = false;
-            for (const child of plotsRobotControlsContainer.children) {
-                child.hidden = true;
-            }
-            for (const child of plotsLinkControlsContainer.children) {
-                child.hidden = false;
-            }
-            plotsRewardControlsContainer.hidden = true;
-            plotsRewardOptionName.hidden = true;
-            for (const child of plotsRewardControlsContainer.children) {
-                child.hidden = true;
-            }
-            globalVariables.groupByRobot = false;
             if (metric === 'Joint Position') {
-                for (const key in globalVariables.checkedObs) {
-                    addHeatMapObsSVG(globalVariables.checkedObs[key]);
-                }
+                addHeatMapObsSVG(selected);
             }
             if (metric === 'Joint Velocity') {
-                for (const key in globalVariables.checkedObs) {
-                    addHeatMapVeloObsSVG(globalVariables.checkedObs[key]);
-                }
+                addHeatMapVeloObsSVG(selected);
             }
             if (metric === 'Joint Torque') {
-                for (const key in globalVariables.checkedObs) {
-                    addHeatMapObsForceSVG(globalVariables.checkedObs[key]);
-                }
+                addHeatMapObsForceSVG(selected);
             }
         } else if (groupBy === 'Reward') {
-            plotsRobotOptionName.hidden = true;
-            plotsRobotControlsContainer.hidden = true;
-            for (const child of plotsRobotControlsContainer.children) {
-                child.hidden = true;
-            }
-
-            plotsLinkOptionName.hidden = true;
-            plotsLinkControlsContainer.hidden = true;
-            for (const child of plotsLinkControlsContainer.children) {
-                child.hidden = true;
-            }
-
-            plotsRewardControlsContainer.hidden = false;
-            plotsRewardOptionName.hidden = false;
-            plotsRewardOptionName.textContent = 'Plot Rewards:';
-
-            for (const child of plotsRewardControlsContainer.children) {
-                child.hidden = false;
-            }
-            globalVariables.groupByRobot = false;
             if (metric === 'Robot') {
-                for (const key in globalVariables.checkedRewards) {
-                    addHeatMapOneRewardALLRobotSVG(
-                        globalVariables.checkedRewards[key],
-                    );
-                }
+                addHeatMapOneRewardALLRobotSVG(selected);
             }
         }
     }
 
     // if only one metric, then hide the metric selection
-    if (smallPlotSelectionMetric.options.length <= 1) {
-        smallPlotSelectionMetric.hidden = true;
-        smallPlotSelectionMetricLabel.hidden = true;
-    } else {
-        smallPlotSelectionMetric.hidden = false;
-        smallPlotSelectionMetricLabel.hidden = false;
-    }
+    // if (smallPlotSelectionMetric.options.length <= 1) {
+    //     smallPlotSelectionMetric.hidden = true;
+    //     smallPlotSelectionMetricLabel.hidden = true;
+    // } else {
+    //     smallPlotSelectionMetric.hidden = false;
+    //     smallPlotSelectionMetricLabel.hidden = false;
+    // }
 };
 
 const globalHeatmapRedraw = () => {
@@ -1709,7 +1597,6 @@ const globalHeatmapRedraw = () => {
         globalPlotSelectionGroupBy.value +
         globalPlotSelectionMetric.value;
 
-    console.log('globalHeatmapRedraw', option);
     if (globalPlotSelectionMetric.options.length <= 1) {
         globalPlotSelectionMetric.hidden = true;
         globalPlotSelectionMetricLabel.hidden = true;
@@ -1743,21 +1630,107 @@ const globalHeatmapRedraw = () => {
     changeGlobalPlot(globalHeatmapSelection.value, option);
 };
 
+const smallPlotSeletionChanged = () => {
+    const value = smallPlotSelectionGroupBy.value;
+    while (smallPlotSelectionSelect.firstChild) {
+        smallPlotSelectionSelect.removeChild(
+            smallPlotSelectionSelect.firstChild,
+        );
+    }
+    if (value === 'Robot') {
+        for (const key in movementContainer.movementDict) {
+            addNewRobotOptionToSmallPlotSelectionSelect(key);
+        }
+
+        plotsRobotOptionName.hidden = true;
+        plotsRobotControlsContainer.hidden = true;
+        for (const child of plotsRobotControlsContainer.children) {
+            child.hidden = true;
+        }
+
+        plotsLinkOptionName.textContent = 'Highlight Joints:';
+        plotsLinkOptionName.hidden = false;
+        plotsLinkControlsContainer.hidden = false;
+        for (const child of plotsLinkControlsContainer.children) {
+            child.hidden = false;
+        }
+        plotsRewardControlsContainer.hidden = true;
+        plotsRewardOptionName.hidden = true;
+        for (const child of plotsRewardControlsContainer.children) {
+            child.hidden = true;
+        }
+        globalVariables.groupByRobot = true;
+    } else if (value === 'Joint') {
+        for (const key in globalVariables.nameObsMap) {
+            addNewObsOptionToSmallPlotSelectionSelect(key);
+        }
+        plotsRobotOptionName.textContent = 'Highlight Robots:';
+        plotsRobotOptionName.hidden = false;
+        plotsRobotControlsContainer.hidden = false;
+        for (const child of plotsRobotControlsContainer.children) {
+            child.hidden = false;
+        }
+
+        plotsLinkOptionName.hidden = true;
+        plotsLinkControlsContainer.hidden = true;
+        for (const child of plotsLinkControlsContainer.children) {
+            child.hidden = true;
+        }
+        plotsRewardControlsContainer.hidden = true;
+        plotsRewardOptionName.hidden = true;
+        for (const child of plotsRewardControlsContainer.children) {
+            child.hidden = true;
+        }
+
+        globalVariables.groupByRobot = false;
+    } else if (value === 'Reward') {
+        for (const key of movementContainer.getRewardLabels()) {
+            addNewRewardOptionToSmallPlotSelectionSelect(key);
+        }
+        plotsRobotOptionName.hidden = false;
+        plotsRobotOptionName.textContent = 'Highlight Robots:';
+        plotsRobotControlsContainer.hidden = false;
+        for (const child of plotsRobotControlsContainer.children) {
+            child.hidden = false;
+        }
+
+        plotsLinkOptionName.hidden = true;
+        plotsLinkControlsContainer.hidden = true;
+        for (const child of plotsLinkControlsContainer.children) {
+            child.hidden = true;
+        }
+
+        plotsRewardControlsContainer.hidden = true;
+        plotsRewardOptionName.hidden = true;
+        for (const child of plotsRewardControlsContainer.children) {
+            child.hidden = true;
+        }
+        globalVariables.groupByRobot = false;
+    }
+    if (smallPlotSeletionPlot.value === 'Heat Map') {
+        plotsRobotOptionName.hidden = true;
+        plotsRobotControlsContainer.hidden = true;
+        for (const child of plotsRobotControlsContainer.children) {
+            child.hidden = true;
+        }
+        plotsLinkOptionName.hidden = true;
+        plotsLinkControlsContainer.hidden = true;
+        for (const child of plotsLinkControlsContainer.children) {
+            child.hidden = true;
+        }
+        plotsRewardControlsContainer.hidden = true;
+        plotsRewardOptionName.hidden = true;
+        for (const child of plotsRewardControlsContainer.children) {
+            child.hidden = true;
+        }
+    }
+};
+
 smallPlotSeletionPlot.addEventListener('change', () => {
-    // const value = smallPlotSeletionPlot.value;
-    // const groupByOptions = Object.keys(
-    //     globalVariables.globalPlotSelections[value],
-    // );
-    // while (smallPlotSelectionGroupBy.firstChild) {
-    //     smallPlotSelectionGroupBy.removeChild(
-    //         smallPlotSelectionGroupBy.firstChild,
-    //     );
-    // }
-    // for (const option of groupByOptions) {
-    //     addSelectionToElement(smallPlotSelectionGroupBy, option);
-    // }
+    smallPlotSeletionChanged();
     plotsSVGRedraw();
 });
+
 smallPlotSelectionGroupBy.addEventListener('change', () => {
     const value = smallPlotSelectionGroupBy.value;
     const metricOptions =
@@ -1772,9 +1745,14 @@ smallPlotSelectionGroupBy.addEventListener('change', () => {
     for (const option of metricOptions) {
         addSelectionToElement(smallPlotSelectionMetric, option);
     }
+    smallPlotSeletionChanged();
     plotsSVGRedraw();
 });
+
 smallPlotSelectionMetric.addEventListener('change', () => {
+    plotsSVGRedraw();
+});
+smallPlotSelectionSelect.addEventListener('change', () => {
     plotsSVGRedraw();
 });
 

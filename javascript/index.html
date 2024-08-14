@@ -144,6 +144,7 @@
                     <div id="plots-controls-container" class="xxx-container">
                         <div id="plots-controls" class="hidden">
                             <div id="toggle-plots-controls"></div>
+                            <div class="small-plot-selection-container">
                                 <label>
                                     Plots Option:&nbsp;&nbsp;
                                     <select id="small-plot-selection-plot">
@@ -155,6 +156,9 @@
                                         </option>
                                     </select>
                                 </label>
+                            </div>
+
+                            <div class="small-plot-selection-container">
                                 <label>
                                     Group By:&nbsp;&nbsp;
                                     <select id="small-plot-selection-groupby">
@@ -163,6 +167,8 @@
                                         <option value="Reward">Reward</option>
                                     </select>
                                 </label>
+                            </div>
+                            <div class="small-plot-selection-container">
                                 <label id="small-plot-selection-metric-label">
                                     Metric:&nbsp;&nbsp;
                                     <select id="small-plot-selection-metric">
@@ -178,6 +184,14 @@
                                         <option value="Reward">Reward</option>
                                     </select>
                                 </label>
+                            </div>
+                            <div class="small-plot-selection-container">
+                                <label id="small-plot-selection-select-label">
+                                    Select:&nbsp;&nbsp;
+                                    <select id="small-plot-selection-select">
+                                    </select>
+                                </label>
+                            </div>
                             <div id="plots-link-option-name"></div>
                             <div
                                 id="plots-link-controls-container"
@@ -193,7 +207,6 @@
                                 id="plots-reward-controls-container"
                                 class="plots-controls-container"
                             ></div>
-                            
                         </div>
                     </div>
                     <div id="svg-container" class="xxx-container"></div>
@@ -203,15 +216,13 @@
             <div id="simulation-contorls-container">
                 <div class="tooltip-container" id="snap-shot-button">
                     <i class="fa-solid fa-camera fa-xl"></i>
-                    <div
-                        class="tooltip-text"
-                    >
-                        Snapshot
-                    </div>
+                    <div class="tooltip-text">Snapshot</div>
                 </div>
                 <div class="tooltip-container" id="lock-position-button">
-                    <i class="fa-solid fa-lock fa-xl"
-                        id="lock-position-button-i"></i>
+                    <i
+                        class="fa-solid fa-lock fa-xl"
+                        id="lock-position-button-i"
+                    ></i>
                     <div
                         class="tooltip-text"
                         id="lock-position-button-tooltip-text"

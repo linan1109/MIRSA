@@ -213,6 +213,15 @@ input:focus {
     width: 100%;
 }
 
+#plots-controls .small-plot-selection-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: left;
+    justify-content: left;
+    width: 50%;
+}
+
 #plots-controls .plots-controls-container {
     display: flex;
     flex-direction: row;
