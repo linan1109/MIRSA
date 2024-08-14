@@ -88,6 +88,7 @@ export class PointTrajectory {
                     color: globalVariables.colorForPointTrajectoryPoint,
                 }),
             );
+            this.points[key].visible = false;
             // find the joint for this robot
             robot.traverse((child) => {
                 if (child.name === this.jointName) {
