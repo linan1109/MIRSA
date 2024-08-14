@@ -664,7 +664,7 @@ global-heatmap-part > div {
 
 .tooltip-container .tooltip-text {
     visibility: hidden;
-    width: 40px;
+    width: 70px;
     background-color: #fff;
     color: black;
     text-align: center;
@@ -674,7 +674,7 @@ global-heatmap-part > div {
     /* Position the tooltip */
     position: absolute;
     bottom: 150%; /* Adjust based on the element height */
-    margin-left: -15px; /* Negative half of the tooltip width */
+    margin-left: -25px; /* Negative half of the tooltip width */
     opacity: 0;
     transition: opacity 0.3s;
 }

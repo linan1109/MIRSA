@@ -64,6 +64,16 @@ class smallSVG {
         }
     }
 
+    destroy() {
+        this.svg
+            .on('click', null)
+            .on('pointermove', null)
+            .on('pointerenter', null)
+            .on('dblclick', null)
+            .on('pointerleave', null);
+        this.svg.remove();
+    }
+
 }
 class SmallLineChartSVG extends smallSVG {
 

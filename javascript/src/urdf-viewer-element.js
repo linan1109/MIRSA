@@ -183,6 +183,7 @@ export default class URDFViewer extends HTMLElement {
         this.robots = {};
         this.loadMeshFunc = null;
         this.urlModifierFunc = null;
+        this.standStill = true;
 
         // Init Robots
         this.robotNames = [0];
@@ -594,7 +595,7 @@ export default class URDFViewer extends HTMLElement {
 
     setRobotPosition(robot, positions) {
         if (!this.robots[robot]) return;
-        if (this.robots[robot].standStill) return;
+        if (this.standStill) return;
         const initPosition = this.robots[robot].initPosition;
         if (
             this.robots[robot].position.set(
@@ -616,7 +617,7 @@ export default class URDFViewer extends HTMLElement {
 
     setRobotRotation(robot, rotations) {
         if (!this.robots[robot]) return;
-        if (this.robots[robot].standStill) return;
+        if (this.standStill) return;
         if (
             this.robots[robot].rotation.set(
                 rotations.x,
@@ -633,6 +634,13 @@ export default class URDFViewer extends HTMLElement {
                 }),
             );
         }
+    }
+
+    setAllRobotStandStill(standStill) {
+        for (const robot in this.robots) {
+            this.setRobotStandStill(robot, standStill);
+        }
+        this.standStill = standStill;
     }
 
     setRobotStandStill(robot, standStill) {

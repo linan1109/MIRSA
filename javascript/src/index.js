@@ -71,6 +71,9 @@ const showGridTextureToggle = document.getElementById(
 const wireframeToggle = document.getElementById('wireframe-toggle');
 const snapShotButton = document.getElementById('snap-shot-button');
 const snapshotContainer = document.getElementById('snapshot-container');
+const lockPositionButton = document.getElementById('lock-position-button');
+const lockPositionButtonIcon = document.getElementById('lock-position-button-i');
+const lockPositionButtonTooltip = document.getElementById('lock-position-button-tooltip-text');
 // const radiansToggle = document.getElementById('radians-toggle');
 // const autocenterToggle = document.getElementById('autocenter-toggle');
 const upSelect = document.getElementById('up-select');
@@ -201,6 +204,20 @@ const setColor = (color) => {
 //     radiansToggle.classList.toggle('checked');
 //     Object.values(sliders).forEach((sl) => sl.update());
 // });
+
+lockPositionButton.addEventListener('click', () => {
+    if (lockPositionButtonIcon.classList.contains('fa-lock')) {
+        lockPositionButtonIcon.classList.remove('fa-lock');
+        lockPositionButtonIcon.classList.add('fa-lock-open');
+        lockPositionButtonTooltip.textContent = 'Lock Position';
+        viewer.setAllRobotStandStill(false);
+    } else {
+        lockPositionButtonIcon.classList.remove('fa-lock-open');
+        lockPositionButtonIcon.classList.add('fa-lock');
+        lockPositionButtonTooltip.textContent = 'Unlock Position';
+        viewer.setAllRobotStandStill(true);
+    }
+});
 
 collisionToggle.addEventListener('click', () => {
     collisionToggle.classList.toggle('checked');
@@ -450,7 +467,6 @@ function createRobotControls(robotNumber) {
         <button id="robot${ robotNumber }-delete" class="beautful-button">Delete</button>
         <div id="robot${ robotNumber }-visible" class="toggle checked robot-control">Visible</div>
         <div id="robot${ robotNumber }-highlight" class="toggle robot-control">Highlight</div>
-        <div id="robot${ robotNumber }-position" class="toggle robot-control">Update Pos.</div>
         <div class="init-position">
             Init Pos. (
             <input id="robot${ robotNumber }-positionx" type="number" class="position-input" value="0" step="0.1"/>, 
@@ -520,16 +536,14 @@ const initRobotControlState = (robotNumber) => {
     const toggleHightlight = document.getElementById(
         `robot${ robotNumber }-highlight`,
     );
-    const toggleMovement = document.getElementById(
-        `robot${ robotNumber }-position`,
-    );
+    // const toggleMovement = document.getElementById(
+    //     `robot${ robotNumber }-position`,
+    // );
 
     const visibility = toggleVisibility.classList.contains('checked');
     viewer.setRobotVisibility(robotNumber, visibility);
     const highlight = toggleHightlight.classList.contains('checked');
     viewer.setRobotHighlight(robotNumber, highlight);
-    const standStill = !toggleMovement.classList.contains('checked');
-    viewer.setRobotStandStill(robotNumber, standStill);
 };
 
 const addListenerToNewRobot = (robotNumber) => {
@@ -544,9 +558,6 @@ const addListenerToNewRobot = (robotNumber) => {
     );
     const toggleHightlight = document.getElementById(
         `robot${ robotNumber }-highlight`,
-    );
-    const toggleMovement = document.getElementById(
-        `robot${ robotNumber }-position`,
     );
     const loadMovement = document.getElementById(`load-movement${ robotNumber }`);
     const initialPosition = {
@@ -579,15 +590,6 @@ const addListenerToNewRobot = (robotNumber) => {
             viewer.setRobotHighlight(robotNumber, false);
         }
     });
-    toggleMovement.addEventListener('click', () => {
-        toggleMovement.classList.toggle('checked');
-        if (toggleMovement.classList.contains('checked')) {
-            viewer.setRobotStandStill(robotNumber, false);
-        } else {
-            viewer.setRobotStandStill(robotNumber, true);
-        }
-    });
-
     deleteButton.addEventListener('click', () => {
         // remove the movement data
         movementContainer.removeMovement(robotNumber);
@@ -793,7 +795,7 @@ const addRobotSelectToggles = (robotNum) => {
                 updateAllSVG();
             }
             if (svgList[robotNum] !== undefined) {
-                svgList[robotNum].svg.remove();
+                svgList[robotNum].destroy();
             }
         } else {
             toggle.classList.add('checked');
@@ -905,7 +907,7 @@ const loadMovementFromCSV = (robotNum) => {
 
 const addLineChartOneReward = (rewardName) => {
     if (svgList[rewardName] !== undefined) {
-        svgList[rewardName].svg.remove();
+        svgList[rewardName].destroy();
     }
     const svg = new SmallLineChartOneRewardAllRobot(
         rewardName,
@@ -920,7 +922,8 @@ const addLineChartOneReward = (rewardName) => {
 
 const addRobotSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
+        // svgList[robotNum].svg.remove();
     }
     // const movement = movementContainer.movementDict[robotNum];
     const svg = new SmallLineChartRobot(robotNum, PlotsPart.offsetWidth);
@@ -933,7 +936,7 @@ const addRobotSVG = (robotNum) => {
 
 const addLineRobotVeloSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
     }
     const svg = new SmallLineChartRobotVelo(robotNum, PlotsPart.offsetWidth);
     const svgNode = svg.svg.node();
@@ -945,7 +948,7 @@ const addLineRobotVeloSVG = (robotNum) => {
 
 const addLineChartRewardOneRobot = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
     }
     const svg = new SmallLineChartReward(robotNum, PlotsPart.offsetWidth);
     const svgNode = svg.svg.node();
@@ -957,7 +960,7 @@ const addLineChartRewardOneRobot = (robotNum) => {
 
 const addLineRobotForceSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
     }
     const svg = new SmallLineChartRobotForce(robotNum, PlotsPart.offsetWidth);
     const svgNode = svg.svg.node();
@@ -969,7 +972,7 @@ const addLineRobotForceSVG = (robotNum) => {
 
 const addHeatMapRobotSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
     }
     const svg = new SmallHeatmapRobot(
         robotNum,
@@ -984,7 +987,7 @@ const addHeatMapRobotSVG = (robotNum) => {
 };
 const addHeatMapRobotVeloSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
     }
     const svg = new SmallHeatmapRobotVelo(
         robotNum,
@@ -1000,7 +1003,7 @@ const addHeatMapRobotVeloSVG = (robotNum) => {
 
 const addHeatMapOneRewardALLRobotSVG = (rewardName) => {
     if (svgList[rewardName] !== undefined) {
-        svgList[rewardName].svg.remove();
+        svgList[rewardName].destroy();
     }
     const svg = new SmallHeatmapOneRewardAllRobot(
         rewardName,
@@ -1016,7 +1019,7 @@ const addHeatMapOneRewardALLRobotSVG = (rewardName) => {
 
 const addHeatMapRobotALLRewardSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
     }
     const svg = new SmallHeatmaphAllRewardOneRobot(
         robotNum,
@@ -1032,7 +1035,7 @@ const addHeatMapRobotALLRewardSVG = (robotNum) => {
 
 const addHeatMapRobotForceSVG = (robotNum) => {
     if (svgList[robotNum] !== undefined) {
-        svgList[robotNum].svg.remove();
+        svgList[robotNum].destroy();
     }
     const svg = new SmallHeatmapRobotForce(
         robotNum,
