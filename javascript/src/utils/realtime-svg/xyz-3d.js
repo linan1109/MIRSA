@@ -457,11 +457,17 @@ export default class XYZ3D {
         this.renderer.render(this.scene, this.camera);
     }
 
-    resize(offsetWidth) {
+    resize(offsetWidth, offsetHeight) {
         this.offsetWidth = offsetWidth;
-        this.width = (80 / 100) * offsetWidth;
+        const width = (80 / 100) * offsetWidth;
+        if (!offsetHeight) {
+            offsetHeight = this.height;
+        }
+        const height = Math.max(offsetHeight - 30, 0);
+        this.width = Math.min(width, height);
         this.height = this.width;
         this.renderer.setSize(this.width, this.height);
+        this.render();
     }
 
     clear() {

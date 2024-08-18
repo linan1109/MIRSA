@@ -154,6 +154,10 @@ const sliderGlbalPlotPart = document.getElementById('slider-global-plots-part');
 const TopPart = document.getElementById('top-part');
 const positionSvgContainer = document.getElementById('position-svg-container');
 
+const sliderTrajSVG = document.getElementById('slider-traj-svg');
+const APartOfRightTraj = document.getElementById('a-part-of-right-traj');
+const APartOfRightSVG = document.getElementById('a-part-of-right-svg');
+
 const plotsControlsContainer = document.getElementById(
     'plots-controls-container',
 );
@@ -445,9 +449,11 @@ positionSvgContainerToggle.addEventListener('click', () => {
     if (positionSvgContainer.classList.contains('hidden')) {
         positionSvgContainerToggleIcon.classList.remove('fa-minus');
         positionSvgContainerToggleIcon.classList.add('fa-plus');
+        APartOfRightTraj.style.maxHeight = '35px';
     } else {
         positionSvgContainerToggleIcon.classList.remove('fa-plus');
         positionSvgContainerToggleIcon.classList.add('fa-minus');
+        APartOfRightTraj.style.maxHeight = '100%';
     }
 });
 // end of hiders
@@ -701,7 +707,10 @@ sliderPlotsPart.addEventListener('pointerup', (e) => {
     plotsSVGRedraw();
     // resize the position svg
     if (positionSVG !== null) {
-        positionSVG.resize(PlotsPart.offsetWidth);
+        positionSVG.resize(
+            parseFloat(PlotsPart.offsetWidth),
+            parseFloat(APartOfRightTraj.style.height) - 40,
+        );
     }
 });
 
@@ -728,6 +737,37 @@ sliderGlbalPlotPart.addEventListener('pointerdown', (e) => {
 sliderGlbalPlotPart.addEventListener('pointerup', (e) => {
     window.removeEventListener('pointermove', globalPlotPartOnPointMove);
     globalHeatmapRedraw();
+});
+
+const trajSvgPartSliderMove = (e) => {
+    if (e.isPrimary) {
+        if (positionSvgContainer.classList.contains('hidden')) {
+            const event = new Event('click');
+            positionSvgContainerToggle.dispatchEvent(event);
+        }
+
+        const sliderPos = e.clientY;
+        const containerHeight = PlotsPart.offsetHeight;
+        const newHeight = containerHeight - sliderPos;
+
+        APartOfRightTraj.style.height = sliderPos - 2 + 'px';
+        APartOfRightSVG.style.height = newHeight + 'px';
+    }
+};
+
+sliderTrajSVG.addEventListener('pointerdown', (e) => {
+    window.addEventListener('pointermove', trajSvgPartSliderMove);
+});
+
+sliderTrajSVG.addEventListener('pointerup', (e) => {
+    window.removeEventListener('pointermove', trajSvgPartSliderMove);
+    // resize the position svg
+    if (positionSVG !== null) {
+        positionSVG.resize(
+            parseFloat(PlotsPart.offsetWidth),
+            parseFloat(APartOfRightTraj.style.height) - 40,
+        );
+    }
 });
 
 // end of slider part
@@ -1496,7 +1536,7 @@ const plotsSVGRedraw = () => {
     const groupBy = smallPlotSelectionGroupBy.value;
     const metric = smallPlotSelectionMetric.value;
     const selected = smallPlotSelectionSelect.value;
-    console.log(selected);
+
     // const type = plotType + groupBy + metric;
     if (plotType === 'Line Chart') {
         if (groupBy === 'Robot') {
