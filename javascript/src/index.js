@@ -183,6 +183,7 @@ const simulationStepInput = document.getElementById(
 const simulationStepLabel = document.getElementById(
     'simulation-contorls-step-input-label',
 );
+const showTrajectoryIcon = document.getElementById('add-traj-button-i');
 
 // const DEG2RAD = Math.PI / 180;
 // const RAD2DEG = 1 / DEG2RAD;
@@ -318,6 +319,12 @@ viewer.addEventListener('joint-mouseout', (event) => {
     if (!globalTimer.isRunning) {
         updateAllSVG();
     }
+});
+
+showTrajectoryIcon.addEventListener('click', () => {
+    // change mouse to pen
+    viewer.style.cursor = `url(${ penIco }), auto`;
+    globalVariables.selectTrajectory = true;
 });
 
 document.addEventListener('animationControl', (e) => {
@@ -1844,15 +1851,15 @@ viewer.addEventListener('angle-change', (e) => {
     if (sliders[e.detail]) sliders[e.detail].update();
 });
 
-viewer.addEventListener('joint-mouseover', (e) => {
-    // change cursor to pen
-    viewer.style.cursor = `url(${ penIco }), auto`;
-});
+// viewer.addEventListener('joint-mouseover', (e) => {
+//     // change cursor to pen
+//     viewer.style.cursor = `url(${ penIco }), auto`;
+// });
 
-viewer.addEventListener('joint-mouseout', (e) => {
-    // change cursor
-    viewer.style.cursor = 'auto';
-});
+// viewer.addEventListener('joint-mouseout', (e) => {
+//     // change cursor
+//     viewer.style.cursor = 'auto';
+// });
 
 let originalNoAutoRecenter;
 viewer.addEventListener('manipulate-start', (e) => {

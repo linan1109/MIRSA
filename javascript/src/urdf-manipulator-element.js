@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import URDFViewer from './urdf-viewer-element.js';
 import { PointerURDFDragControls } from './URDFDragControls.js';
+import globalVariables from './utils/global-variables.js';
 
 // urdf-manipulator element
 // Displays a URDF model that can be manipulated with the mouse
@@ -147,7 +148,11 @@ export default class URDFManipulator extends URDFViewer {
         };
 
         dragControls.onClick = (joint, robot, point) => {
-            this.pointTrajectory.updateSelectedPoint(joint, robot, point);
+            if (globalVariables.selectTrajectory) {
+                this.pointTrajectory.updateSelectedPoint(joint, robot, point);
+                globalVariables.selectTrajectory = false;
+                this.style.cursor = 'auto';
+            }
             const event = new CustomEvent('joint-click', {
                 bubbles: true,
                 cancelable: true,

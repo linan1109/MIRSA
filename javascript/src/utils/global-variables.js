@@ -74,6 +74,8 @@ const globalVariables = {
             'Reward': ['Robot'],
         },
     },
+
+    selectTrajectory: false,
 };
 
 export default globalVariables;
