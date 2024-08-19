@@ -395,6 +395,10 @@ viewer.addEventListener('trajectory-update', (e) => {
             cancelTrajectory();
         });
         positionSvgContainer.appendChild(button);
+        positionSVG.resize(
+            parseFloat(PlotsPart.offsetWidth),
+            parseFloat(APartOfRightTraj.style.height) - 40,
+        );
     }
     const positionList = e.detail;
     positionSVG.addPosition(globalTimer.getCurrent(), positionList);
@@ -754,11 +758,7 @@ const trajSvgPartSliderMove = (e) => {
         }
 
         const sliderPos = e.clientY;
-        const containerHeight = PlotsPart.offsetHeight;
-        const newHeight = containerHeight - sliderPos;
-
         APartOfRightTraj.style.height = sliderPos - 2 + 'px';
-        APartOfRightSVG.style.height = newHeight + 'px';
     }
 };
 
