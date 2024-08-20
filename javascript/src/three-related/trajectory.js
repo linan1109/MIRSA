@@ -81,7 +81,7 @@ export class PointTrajectory {
                 }),
             );
 
-            const pointGeometry = new THREE.SphereGeometry(0.005, 32, 32);
+            const pointGeometry = new THREE.SphereGeometry(0.01, 32, 32);
             this.points[key] = new THREE.Mesh(
                 pointGeometry,
                 new THREE.MeshBasicMaterial({
