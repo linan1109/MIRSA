@@ -162,6 +162,7 @@ const plotsControlsContainer = document.getElementById(
     'plots-controls-container',
 );
 const svgContainerToggle = document.getElementById('svg-container-toggle');
+const SyncPlotsToggle = document.getElementById('sync-plots-toggle');
 
 // const snapshotSvgContainerToggle = document.getElementById(
 //     'snapshot-svg-container-toggle',
@@ -281,20 +282,6 @@ viewer.addEventListener('snapshot', (e) => {
         snapShotDiv.addImage(img, time);
         globalXAxis.addOneSnapshot(time);
     }
-});
-
-globalHeatmapSelection.addEventListener('change', (e) => {
-    // if no option
-    if (globalHeatmapSelection.options.length === 0) {
-        while (globalHeatmapContainer.firstChild) {
-            globalHeatmapContainer.removeChild(
-                globalHeatmapContainer.firstChild,
-            );
-            globalHeatmapSvg = null;
-        }
-        return;
-    }
-    changeGlobalPlot(globalHeatmapSelection.value);
 });
 
 addRobotButton.addEventListener('click', () => {
@@ -1760,13 +1747,15 @@ const smallPlotSeletionChanged = () => {
         }
     }
 };
-
-smallPlotSeletionPlot.addEventListener('change', () => {
+const smallPlotSeletionPlotChanged = () => {
     smallPlotSeletionChanged();
     plotsSVGRedraw();
-});
 
-smallPlotSelectionGroupBy.addEventListener('change', () => {
+    if (globalVariables.syncPlots) {
+        globalPlotSelectionPlot.value = smallPlotSeletionPlot.value;
+    }
+};
+const smallPlotSelectionGroupByChanged = () => {
     const value = smallPlotSelectionGroupBy.value;
     const metricOptions =
         globalVariables.globalPlotSelections[smallPlotSeletionPlot.value][
@@ -1782,13 +1771,41 @@ smallPlotSelectionGroupBy.addEventListener('change', () => {
     }
     smallPlotSeletionChanged();
     plotsSVGRedraw();
-});
-
-smallPlotSelectionMetric.addEventListener('change', () => {
+};
+const smallPlotSelectionMetricChanged = () => {
     plotsSVGRedraw();
+};
+const smallPlotSelectionSelectChanged = () => {
+    plotsSVGRedraw();
+};
+
+smallPlotSeletionPlot.addEventListener('change', () => {
+    smallPlotSeletionPlotChanged();
+    if (globalVariables.syncPlots) {
+        globalPlotSelectionPlot.value = smallPlotSeletionPlot.value;
+        globalPlotSelectionPlotChanged();
+    }
+});
+smallPlotSelectionGroupBy.addEventListener('change', () => {
+    smallPlotSelectionGroupByChanged();
+    if (globalVariables.syncPlots) {
+        globalPlotSelectionGroupBy.value = smallPlotSelectionGroupBy.value;
+        globalPlotSelectionGroupByChanged();
+    }
+});
+smallPlotSelectionMetric.addEventListener('change', () => {
+    smallPlotSelectionMetricChanged();
+    if (globalVariables.syncPlots) {
+        globalPlotSelectionMetric.value = smallPlotSelectionMetric.value;
+        globalPlotSelectionMetricChanged();
+    }
 });
 smallPlotSelectionSelect.addEventListener('change', () => {
-    plotsSVGRedraw();
+    smallPlotSelectionSelectChanged();
+    if (globalVariables.syncPlots) {
+        globalHeatmapSelection.value = smallPlotSelectionSelect.value;
+        globalPlotSelectionSelectChanged();
+    }
 });
 
 const addSelectionToElement = (selectElement, option) => {
@@ -1798,7 +1815,7 @@ const addSelectionToElement = (selectElement, option) => {
     selectElement.appendChild(optionElement);
 };
 
-globalPlotSelectionPlot.addEventListener('change', () => {
+const globalPlotSelectionPlotChanged = () => {
     // const value = globalPlotSelectionPlot.value;
     // const groupByOptions = Object.keys(
     //     globalVariables.globalPlotSelections[value],
@@ -1812,8 +1829,8 @@ globalPlotSelectionPlot.addEventListener('change', () => {
     //     addSelectionToElement(globalPlotSelectionGroupBy, option);
     // }
     globalHeatmapRedraw();
-});
-globalPlotSelectionGroupBy.addEventListener('change', () => {
+};
+const globalPlotSelectionGroupByChanged = () => {
     const value = globalPlotSelectionGroupBy.value;
     const metricOptions =
         globalVariables.globalPlotSelections[globalPlotSelectionPlot.value][
@@ -1828,9 +1845,68 @@ globalPlotSelectionGroupBy.addEventListener('change', () => {
         addSelectionToElement(globalPlotSelectionMetric, option);
     }
     globalHeatmapRedraw();
-});
-globalPlotSelectionMetric.addEventListener('change', () => {
+};
+const globalPlotSelectionMetricChanged = () => {
     globalHeatmapRedraw();
+};
+const globalPlotSelectionSelectChanged = () => {
+    // if no option
+    if (globalHeatmapSelection.options.length === 0) {
+        while (globalHeatmapContainer.firstChild) {
+            globalHeatmapContainer.removeChild(
+                globalHeatmapContainer.firstChild,
+            );
+            globalHeatmapSvg = null;
+        }
+        return;
+    }
+    changeGlobalPlot(globalHeatmapSelection.value);
+};
+
+globalPlotSelectionPlot.addEventListener('change', () => {
+    globalPlotSelectionPlotChanged();
+    if (globalVariables.syncPlots) {
+        smallPlotSeletionPlot.value = globalPlotSelectionPlot.value;
+        smallPlotSeletionPlotChanged();
+    }
+});
+globalPlotSelectionGroupBy.addEventListener('change', () => {
+    globalPlotSelectionGroupByChanged();
+    if (globalVariables.syncPlots) {
+        smallPlotSelectionGroupBy.value = globalPlotSelectionGroupBy.value;
+        smallPlotSelectionGroupByChanged();
+    }
+});
+
+globalPlotSelectionMetric.addEventListener('change', () => {
+    globalPlotSelectionMetricChanged();
+    if (globalVariables.syncPlots) {
+        smallPlotSelectionMetric.value = globalPlotSelectionMetric.value;
+        smallPlotSelectionMetricChanged();
+    }
+});
+
+globalHeatmapSelection.addEventListener('change', (e) => {
+    globalPlotSelectionSelectChanged();
+    if (globalVariables.syncPlots) {
+        smallPlotSelectionSelect.value = globalHeatmapSelection.value;
+        smallPlotSelectionSelectChanged();
+    }
+});
+
+SyncPlotsToggle.addEventListener('click', () => {
+    SyncPlotsToggle.classList.toggle('checked');
+    globalVariables.syncPlots = !globalVariables.syncPlots;
+    if (globalVariables.syncPlots) {
+        smallPlotSeletionPlot.value = globalPlotSelectionPlot.value;
+        smallPlotSeletionPlotChanged();
+        smallPlotSelectionGroupBy.value = globalPlotSelectionGroupBy.value;
+        smallPlotSelectionGroupByChanged();
+        smallPlotSelectionMetric.value = globalPlotSelectionMetric.value;
+        smallPlotSelectionMetricChanged();
+        smallPlotSelectionSelect.value = globalHeatmapSelection.value;
+        smallPlotSelectionSelectChanged();
+    }
 });
 
 controlsToggle.addEventListener('click', () =>

@@ -76,6 +76,7 @@ const globalVariables = {
     },
 
     selectTrajectory: false,
+    syncPlots: true,
 };
 
 export default globalVariables;
