@@ -5,6 +5,8 @@ import { AxesScene } from './three-related/axes-scene.js';
 import URDFLoader from './URDFLoader.js';
 import { PointTrajectory } from './three-related/trajectory.js';
 import globalTimer from './utils/global-timer.js';
+
+const axesSceneDiv = document.getElementById('axes-scene-div');
 // import { index, timeout } from 'd3';
 
 const tempVec2 = new THREE.Vector2();
@@ -325,11 +327,17 @@ export default class URDFViewer extends HTMLElement {
         });
 
         // Add a new scene the axis
-        this.axesScene = new AxesScene(this.renderer);
-        this.renderer.domElement.addEventListener('axis-hover', () => {
+        const axesRenderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+        });
+        axesRenderer.setSize(100, 100);
+        this.axesScene = new AxesScene(axesRenderer);
+        axesSceneDiv.appendChild(axesRenderer.domElement);
+        axesRenderer.domElement.addEventListener('axis-hover', () => {
             this.redraw();
         });
-        this.renderer.domElement.addEventListener('axis-click', (e) => {
+        axesRenderer.domElement.addEventListener('axis-click', (e) => {
             if (e.detail === 'xAxis') {
                 this.changeCameraPosition(new THREE.Vector3(2, 0, 0));
             }

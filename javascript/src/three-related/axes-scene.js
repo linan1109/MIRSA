@@ -7,7 +7,7 @@ export class AxesScene {
         const axesScene = new THREE.Scene();
         // const axesHelper = new THREE.AxesHelper(1);
         // axesScene.add(axesHelper);
-        const axesCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+        const axesCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 10);
         axesCamera.position.z = 2;
         axesCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -52,6 +52,8 @@ export class AxesScene {
 
         // this.axesHelper = axesHelper;
         this.raycaster = new THREE.Raycaster();
+        this.raycaster.linePrecision = 0.05;
+        this.raycaster.params.Line.threshold = 0.1;
         this.mouse = new THREE.Vector2();
 
         this.renderer.domElement.addEventListener(
@@ -84,11 +86,9 @@ export class AxesScene {
         this.width = this.renderer.domElement.width;
         this.height = this.renderer.domElement.height;
         // Set the viewport for the axes for left top corner
-        const startLeft = this.width * 0.15;
-        const startTop = this.height * 0.65;
         this.renderer.setViewport(
-            startLeft,
-            startTop,
+            0,
+            0,
             this.sceneLength,
             this.sceneLength,
         );
@@ -99,12 +99,8 @@ export class AxesScene {
 
     updateMousePosition(event) {
         const rect = this.renderer.domElement.getBoundingClientRect();
-        const offsetLeft = rect.left + this.width * 0.15;
-        const offsetTop = rect.top + this.height * 0.35 - this.sceneLength;
-        this.mouse.x =
-            ((event.clientX - offsetLeft) / this.sceneLength) * 2 - 1;
-        this.mouse.y =
-            -((event.clientY - offsetTop) / this.sceneLength) * 2 + 1 - 0.135;
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     }
 
     checkIntersection() {
@@ -118,6 +114,8 @@ export class AxesScene {
     onhover(event) {
         this.updateMousePosition(event);
         const intersects = this.checkIntersection();
+        console.log(this.mouse);
+        console.log(intersects);
         if (intersects.length > 0) {
             const intersect = intersects[0];
             this.hoveredAxis = intersect.object.name;
