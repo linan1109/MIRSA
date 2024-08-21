@@ -114,8 +114,6 @@ export class AxesScene {
     onhover(event) {
         this.updateMousePosition(event);
         const intersects = this.checkIntersection();
-        console.log(this.mouse);
-        console.log(intersects);
         if (intersects.length > 0) {
             const intersect = intersects[0];
             this.hoveredAxis = intersect.object.name;

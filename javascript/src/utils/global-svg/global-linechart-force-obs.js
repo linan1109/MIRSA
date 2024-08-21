@@ -22,10 +22,8 @@ export default class GlobalLineChartObsForce extends GlobalLineChartSVG {
                 parseFloat(d[globalVariables.nameObsMap[this.obsName]]),
             );
         }
-        console.log(this.all_y);
         const yMin = d3.min(Object.values(this.all_y).flat());
         const yMax = d3.max(Object.values(this.all_y).flat());
-        console.log(yMin, yMax);
         // const yMin = -4;
         // const yMax = 4;
         this.yScale = d3

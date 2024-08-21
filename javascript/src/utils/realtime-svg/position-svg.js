@@ -267,7 +267,7 @@ export default class PositionSVG extends RealTimeSVG {
     }
 
     resize(offsetWidth) {
-        console.log('resize', offsetWidth);
+        // console.log('resize', offsetWidth);
         this.offsetWidth = offsetWidth;
         this.width = (95 / 100) * offsetWidth;
         this.height = this.width * 0.5;

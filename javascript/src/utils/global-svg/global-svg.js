@@ -74,7 +74,7 @@ class globalPlotSVG {
         if (globalTimer.isRunning) {
             animationControl.uncheck();
         } else {
-            console.log('singleclicked', event);
+            // console.log('singleclicked', event);
             const [xw, y] = d3.pointer(event);
             const x = xw / this.width;
             const current = x * this.dataLength;
@@ -109,7 +109,7 @@ class globalPlotSVG {
                     this.singleclicked(event);
                     return;
                 }
-                console.log('brushed', x0, x1);
+                // console.log('brushed', x0, x1);
                 this.brushedWidth = x1 - x0;
                 this.brushStart = x0;
                 globalVariables.brushStart = x0;

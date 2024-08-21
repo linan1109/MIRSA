@@ -58,7 +58,7 @@ export default class GlobalXAxis {
     }
 
     updateSetup(width, length) {
-        console.log('Setting width to: ', width);
+        // console.log('Setting width to: ', width);
         if (!width) {
             width = this.maxWidth;
         }

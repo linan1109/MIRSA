@@ -10,7 +10,6 @@ export default class GlobalLineChartOneRobotAllReward extends GlobalLineChartSVG
         super(offsetWidth, offsetHeight);
         this.robotNum = robotNum;
         this.movement = movementContainer.getReward(robotNum);
-        console.log(this.movement);
         this.dataLength = this.movement.length;
         this.id = 'global-linechart-robot' + robotNum;
         this.setup();

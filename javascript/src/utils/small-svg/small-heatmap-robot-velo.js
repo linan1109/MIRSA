@@ -31,7 +31,6 @@ export default class SmallHeatmapRobotVelo extends SmallHeatMapSVG {
             this.minValue,
             this.maxValue,
         ]);
-        console.log(this.minValue, this.maxValue);
 
         this.createHeatmap();
 
