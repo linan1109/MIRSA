@@ -182,6 +182,7 @@ export default class SmallLineChartRobotVelo extends SmallLineChartSVG {
         this.yScale = d3
             .scaleLinear()
             .domain([yMin, yMax])
+            .nice()
             .range([this.height - this.marginBottom, this.marginTop]);
         // Add the vertical axis.
         this.svg

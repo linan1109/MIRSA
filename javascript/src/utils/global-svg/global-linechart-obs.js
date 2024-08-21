@@ -29,10 +29,12 @@ export default class GlobalLineChartObs extends GlobalLineChartSVG {
         this.yScale = d3
             .scaleLinear()
             .domain([yMin, yMax])
+            .nice()
             .range([this.height, 0]);
         this.xScale = d3
             .scaleLinear()
             .domain(d3.extent(this.all_x))
+            .nice()
             .range([0, this.width]);
 
         this.points = [];
