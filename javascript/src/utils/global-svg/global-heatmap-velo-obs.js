@@ -223,30 +223,9 @@ export default class GlobalHeatmapVelocityObs extends globalHeatMapSVG {
         this.addRectLegend();
 
         // add brush
-        this.brush = d3
-            .brushX()
-            .extent([
-                [0, 0],
-                [this.width, this.height],
-            ])
-            .on('end', (event) => this.brushed(event));
-        this.svg.append('g').attr('class', 'brush').call(this.brush);
-        if (this.brushedWidth > 0) {
-            const x0 = this.brushStart;
-            const x1 = this.brushStart + this.brushedWidth;
-            this.svg
-                .selectAll('.brush')
-                .call(this.brush.move, [
-                    (x0 / this.dataLength) * this.width,
-                    (x1 / this.dataLength) * this.width,
-                ]);
-        }
-
+        this.addBrush();
         // bind events
-        this.svg
-            .on('click', (event) => this.singleclicked(event))
-            .on('pointermove', (event) => this.pointermoved(event))
-            .on('pointerleave', (event) => this.pointerleft(event));
+        this.bindEvents();
     }
 
 }

@@ -820,3 +820,11 @@ global-heatmap-part > div {
     padding: 10px;
     margin: 10px;
 }
+
+.global-brush-lock-button-container :hover{
+    color: aliceblue;
+}
+
+#global-brush-lock-button {
+    font-size: 20px;
+}

@@ -10,6 +10,7 @@ export default class SmallLineChartRobotForce extends SmallLineChartSVG {
     constructor(robotNum, offsetWidth) {
         super(offsetWidth);
         this.movement = movementContainer.getJointForce(robotNum);
+        this.dataLength = this.movement.length;
         this.robotNum = robotNum;
         this.currentObs = null;
 
@@ -239,9 +240,11 @@ export default class SmallLineChartRobotForce extends SmallLineChartSVG {
                 );
                 if (globalVariables.lockBrush) {
                     x0 = Math.floor(globalVariables.brushStart);
+                    x0 = Math.max(0, x0);
                     x1 =
                         Math.floor(globalVariables.brushStart +
                             globalVariables.rightSvgWindowSize);
+                    x1 = Math.min(this.movement.length, x1);
                 }
 
                 // slice the window for the current time

@@ -10,7 +10,7 @@ export default class SmallLineChartReward extends SmallLineChartSVG {
     constructor(robotNum, offsetWidth) {
         super(offsetWidth);
         this.movement = movementContainer.getReward(robotNum);
-        console.log(this.movement);
+        this.dataLength = this.movement.length;
         this.robotNum = robotNum;
         this.currentObs = null;
         this.rewardLabels = movementContainer.getRewardLabels();
@@ -72,10 +72,7 @@ export default class SmallLineChartReward extends SmallLineChartSVG {
                                 x.map((d, i) => [
                                     this.xScale(d),
                                     this.yScale(
-                                        parseFloat(
-                                            this.movement[d][key
-                                            ],
-                                        ),
+                                        parseFloat(this.movement[d][key]),
                                     ),
                                     key,
                                 ]),
@@ -151,11 +148,7 @@ export default class SmallLineChartReward extends SmallLineChartSVG {
             this.points = this.points.concat(
                 this.all_x.map((d, i) => [
                     this.xScale(d),
-                    this.yScale(
-                        parseFloat(
-                            this.movement[d][key],
-                        ),
-                    ),
+                    this.yScale(parseFloat(this.movement[d][key])),
                     key,
                 ]),
             );
@@ -239,9 +232,12 @@ export default class SmallLineChartReward extends SmallLineChartSVG {
                 );
                 if (globalVariables.lockBrush) {
                     x0 = Math.floor(globalVariables.brushStart);
-                    x1 =
-                        Math.floor(globalVariables.brushStart +
-                            globalVariables.rightSvgWindowSize);
+                    x0 = Math.max(0, x0);
+                    x1 = Math.floor(
+                        globalVariables.brushStart +
+                            globalVariables.rightSvgWindowSize,
+                    );
+                    x1 = Math.min(this.dataLength, x1);
                 }
 
                 // slice the window for the current time
@@ -258,11 +254,7 @@ export default class SmallLineChartReward extends SmallLineChartSVG {
                     this.points = this.points.concat(
                         x.map((d, i) => [
                             this.xScale(d),
-                            this.yScale(
-                                parseFloat(
-                                    this.movement[d][key],
-                                ),
-                            ),
+                            this.yScale(parseFloat(this.movement[d][key])),
                             key,
                         ]),
                     );

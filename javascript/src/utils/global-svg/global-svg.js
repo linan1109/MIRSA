@@ -129,10 +129,17 @@ class globalPlotSVG {
                 const brushedevent = new CustomEvent('global-map-brushed', {
                     detail: { x0, x1 },
                 });
+                this.buttonG.attr(
+                    'transform',
+                    `translate(${ (x1 / this.dataLength) * this.width - this.buttonWidth }, ${ this.height - this.buttonHeight })`,
+                );
+                this.buttonG.style('display', null);
+
                 document.dispatchEvent(brushedevent);
             }
         } else {
             this.brushedWidth = null;
+            this.buttonG.style('display', 'none');
         }
     }
 
@@ -156,6 +163,88 @@ class globalPlotSVG {
             globalTimer.setEndAt(x1);
         }
     }
+
+    onclickLockBrushButton() {
+        globalVariables.lockBrush = !globalVariables.lockBrush;
+        const buttonIcon = d3.select('#global-brush-lock-button');
+        if (globalVariables.lockBrush) {
+            buttonIcon.classed('fa-lock', true);
+            buttonIcon.classed('fa-lock-open', false);
+        } else {
+            buttonIcon.classed('fa-lock', false);
+            buttonIcon.classed('fa-lock-open', true);
+        }
+        this.setByLockBrush();
+    }
+
+    addBrush() {
+        this.brush = d3
+            .brushX()
+            .extent([
+                [0, 0],
+                [this.width, this.height],
+            ])
+            .on('end', (event) => this.brushed(event));
+        this.svg.append('g').attr('class', 'brush').call(this.brush);
+
+        this.buttonWidth = 25;
+        this.buttonHeight = 25;
+        this.buttonG = this.svg
+            .append('g')
+            .attr('class', 'button-group')
+            .style('display', null);
+
+        if (globalVariables.lockBrush) {
+            this.buttonG
+                .append('foreignObject')
+                .attr('class', 'global-brush-lock-button-container')
+                .attr('width', this.buttonWidth)
+                .attr('height', this.buttonHeight)
+                .append('xhtml:div')
+                .html(
+                    '<i class="fa-solid fa-lock" id="global-brush-lock-button"></i>',
+                );
+        } else {
+            this.buttonG
+                .append('foreignObject')
+                .attr('class', 'global-brush-lock-button-container')
+                .attr('width', this.buttonWidth)
+                .attr('height', this.buttonHeight)
+                .append('xhtml:div')
+                .html(
+                    '<i class="fa-solid fa-lock-open" id="global-brush-lock-button"></i>',
+                );
+        }
+
+        if (this.brushedWidth > 0) {
+            const x0 = this.brushStart;
+            const x1 = this.brushStart + this.brushedWidth;
+            this.svg
+                .selectAll('.brush')
+                .call(this.brush.move, [
+                    (x0 / this.dataLength) * this.width,
+                    (x1 / this.dataLength) * this.width,
+                ]);
+
+            // move the button
+            this.buttonG.attr(
+                'transform',
+                `translate(${ (x1 / this.dataLength) * this.width - this.buttonWidth }, ${ this.height - this.buttonHeight })`,
+            );
+        }
+    }
+
+    bindEvents() {
+        this.svg
+            .on('click', (event) => this.singleclicked(event))
+            .on('pointermove', (event) => this.pointermoved(event))
+            .on('pointerleave', (event) => this.pointerleft(event));
+        this.buttonG.on('click', (event) => {
+            event.stopPropagation();
+            this.onclickLockBrushButton();
+        });
+    }
+
     // functions to set in child class
     updatePlotOnTime() {}
 
@@ -332,30 +421,9 @@ class globalHeatMapSVG extends globalPlotSVG {
         this.addRectLegend();
 
         // add brush
-        this.brush = d3
-            .brushX()
-            .extent([
-                [0, 0],
-                [this.width, this.height],
-            ])
-            .on('end', (event) => this.brushed(event));
-        this.svg.append('g').attr('class', 'brush').call(this.brush);
-        if (this.brushedWidth > 0) {
-            const x0 = this.brushStart;
-            const x1 = this.brushStart + this.brushedWidth;
-            this.svg
-                .selectAll('.brush')
-                .call(this.brush.move, [
-                    (x0 / this.dataLength) * this.width,
-                    (x1 / this.dataLength) * this.width,
-                ]);
-        }
-
+        this.addBrush();
         // bind events
-        this.svg
-            .on('click', (event) => this.singleclicked(event))
-            .on('pointermove', (event) => this.pointermoved(event))
-            .on('pointerleave', (event) => this.pointerleft(event));
+        this.bindEvents();
     }
 
     createSmallHeatmap(ylabel, allData, orderNow) {
@@ -430,6 +498,10 @@ class globalHeatMapSVG extends globalPlotSVG {
                         (x0 / this.dataLength) * this.width,
                         (x1 / this.dataLength) * this.width,
                     ]);
+                this.buttonG.attr(
+                    'transform',
+                    `translate(${ (x1 / this.dataLength) * this.width - this.buttonWidth }, ${ this.height - this.buttonHeight })`,
+                );
             }
         }
     }

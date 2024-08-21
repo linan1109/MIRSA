@@ -189,19 +189,22 @@ class SmallHeatMapSVG extends smallSVG {
         this.lastUpateTime = current;
         let xStart = current - this.windowSize / 2;
         let xEnd = current + this.windowSize / 2;
-        if (xStart < 0) {
-            xStart = 0;
-            xEnd = this.windowSize;
-        }
-        if (xEnd > this.dataLength) {
-            xEnd = this.dataLength;
-            xStart = xEnd - this.windowSize;
-        }
         if (globalVariables.lockBrush) {
             xStart = Math.floor(globalVariables.brushStart);
-            xEnd =
-                Math.floor(globalVariables.brushStart +
-                    globalVariables.rightSvgWindowSize);
+            xStart = xStart < 0 ? 0 : xStart;
+            xEnd = Math.floor(
+                globalVariables.brushStart + globalVariables.rightSvgWindowSize,
+            );
+            xEnd = xEnd > this.dataLength ? this.dataLength : xEnd;
+        } else {
+            if (xStart < 0) {
+                xStart = 0;
+                xEnd = this.windowSize;
+            }
+            if (xEnd > this.dataLength) {
+                xEnd = this.dataLength;
+                xStart = xEnd - this.windowSize;
+            }
         }
         this.xScale = d3
             .scaleLinear()
@@ -232,7 +235,7 @@ class SmallHeatMapSVG extends smallSVG {
             .call((g) => g.selectAll('.tick text').attr('fill', 'black'));
 
         // update the cards
-        const data = this.processData(xStart);
+        const data = this.processData(xStart, xEnd);
         const cards = this.svg
             .selectAll('.card')
             .data(data, (d) => `${ d.y }:${ d.x }`);

@@ -176,7 +176,7 @@ const positionSvgContainerToggle = document.getElementById(
 const positionSvgContainerToggleIcon = document.getElementById(
     'position-svg-container-toggle-icon',
 );
-const brushLockToggle = document.getElementById('brush-lock-toggle');
+// const brushLockToggle = document.getElementById('brush-lock-toggle');
 
 const simulationStepInput = document.getElementById(
     'simulation-contorls-step-input',
@@ -247,13 +247,13 @@ wireframeToggle.addEventListener('click', () => {
     viewer.changeWireframe(wireframeToggle.classList.contains('checked'));
 });
 
-brushLockToggle.addEventListener('click', () => {
-    brushLockToggle.classList.toggle('checked');
-    globalVariables.lockBrush = brushLockToggle.classList.contains('checked');
-    if (globalHeatmapSvg !== null) {
-        globalHeatmapSvg.setByLockBrush();
-    }
-});
+// brushLockToggle.addEventListener('click', () => {
+//     brushLockToggle.classList.toggle('checked');
+//     globalVariables.lockBrush = brushLockToggle.classList.contains('checked');
+//     if (globalHeatmapSvg !== null) {
+//         globalHeatmapSvg.setByLockBrush();
+//     }
+// });
 
 // autocenterToggle.addEventListener('click', () => {
 //     autocenterToggle.classList.toggle('checked');

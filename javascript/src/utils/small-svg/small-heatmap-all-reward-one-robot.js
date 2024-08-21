@@ -48,8 +48,8 @@ export default class SmallHeatmaphAllRewardOneRobot extends SmallHeatMapSVG {
         );
     }
 
-    processData(start) {
-        const eachGridDataLength = Math.floor(this.windowSize / this.gridNum);
+    processData(start, end) {
+        const eachGridDataLength = Math.floor((end - start) / this.gridNum);
         const processedData = [];
         start = Math.floor(start);
 

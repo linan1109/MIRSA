@@ -10,6 +10,7 @@ export default class SmallLineChartObsVelo extends SmallLineChartSVG {
     constructor(obsName, offsetWidth) {
         super(offsetWidth);
         this.obsName = obsName; // key in nameObsMap
+        this.dataLength = globalVariables.movementMinLen;
         this.currentMov = null;
 
         this.setup();
@@ -265,9 +266,11 @@ export default class SmallLineChartObsVelo extends SmallLineChartSVG {
             );
             if (globalVariables.lockBrush) {
                 x0 = Math.floor(globalVariables.brushStart);
+                x0 = Math.max(0, x0);
                 x1 =
                     Math.floor(globalVariables.brushStart +
                         globalVariables.rightSvgWindowSize);
+                x1 = Math.min(this.dataLength, x1);
             }
 
             // slice the window for the current time

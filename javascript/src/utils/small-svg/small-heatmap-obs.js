@@ -1,5 +1,6 @@
 import { SmallHeatMapSVG } from './small-svg.js';
 import movementContainer from '../movement-container.js';
+import globalVariables from '../global-variables.js';
 
 export default class SmallHeatmapObs extends SmallHeatMapSVG {
 
@@ -8,6 +9,7 @@ export default class SmallHeatmapObs extends SmallHeatMapSVG {
 
         // this.data = movementContainer.getMovement(robotNum);
         // this.dataLength = this.data.length;
+        this.dataLength = globalVariables.movementMinLen;
         this.id = 'small-heatmap-obs' + obsName;
         this.yLabels = movementContainer.robotNums;
         this.obsName = obsName;
@@ -34,11 +36,10 @@ export default class SmallHeatmapObs extends SmallHeatMapSVG {
         );
     }
 
-    processData(start) {
-        const eachGridDataLength = Math.floor(this.windowSize / this.gridNum);
+    processData(start, end) {
+        const eachGridDataLength = Math.floor((end - start) / this.gridNum);
         const processedData = [];
         start = Math.floor(start);
-
         for (let i = 0; i < this.yLabels.length; i++) {
             const robotNum = this.yLabels[i];
             const data = movementContainer.getMovement(robotNum);
