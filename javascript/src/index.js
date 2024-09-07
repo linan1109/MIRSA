@@ -789,14 +789,10 @@ const addObsSelectToggles = () => {
                     globalVariables.checkedObs.splice(index, 1);
                     updateAllSVG();
                 }
-                if (svgList[key] !== undefined) {
-                    svgList[key].svg.remove();
-                }
             } else {
                 toggle.classList.add('checked');
                 globalVariables.checkedObs.push(key);
-                plotsSVGRedraw();
-                globalHeatmapRedraw();
+                updateAllSVG();
             }
         });
         plotsLinkControlsContainer.appendChild(toggle);
@@ -826,14 +822,10 @@ const addRewardSelectToggles = () => {
                     globalVariables.checkedRewards.splice(index, 1);
                     updateAllSVG();
                 }
-                if (svgList[key] !== undefined) {
-                    svgList[key].svg.remove();
-                }
             } else {
                 toggle.classList.add('checked');
                 globalVariables.checkedRewards.push(key);
-                plotsSVGRedraw();
-                globalHeatmapRedraw();
+                updateAllSVG();
             }
         });
         plotsRewardControlsContainer.appendChild(toggle);
@@ -856,14 +848,10 @@ const addRobotSelectToggles = (robotNum) => {
                 globalVariables.checkedRobots.splice(index, 1);
                 updateAllSVG();
             }
-            if (svgList[robotNum] !== undefined) {
-                svgList[robotNum].destroy();
-            }
         } else {
             toggle.classList.add('checked');
             globalVariables.checkedRobots.push(robotNum);
-            plotsSVGRedraw();
-            globalHeatmapRedraw();
+            updateAllSVG();
         }
     });
 
