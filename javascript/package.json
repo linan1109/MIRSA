@@ -1,7 +1,7 @@
 {
-  "name": "urdf-loader",
+  "name": "MRISA",
   "version": "0.12.0",
-  "description": "URDF Loader for THREE.js and webcomponent viewer",
+  "description": "Multi-Robot Interaction Simulation and Analysis Platform",
   "main": "src/URDFLoader.js",
   "type": "module",
   "scripts": {
@@ -23,7 +23,7 @@
     "url": "git+https://github.com/linan1109/urdf-loaders.git"
   },
   "bugs": {
-    "url": "https://github.com/gkjohnson/urdf-loaders/issues"
+    "url": "https://github.com/linan1109/urdf-loaders/issues"
   },
   "homepage": "https://github.com/linan1109/urdf-loaders#readme",
   "keywords": [
