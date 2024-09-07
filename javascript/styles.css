@@ -1,9 +1,10 @@
 :root {
     --main-text-color: black;
     --plot-background-color: #f0f8ff00;
-    --button-background-color:rgb(240, 248, 255);
+    --button-background-color:rgba(240, 248, 255, 0.9);
     --main-background-color: #c8c8c899;
     --main-font-family: "Roboto", helvetica, arial, sans-serif;
+    --select-background-color: rgb(240, 248, 255, 0.9);
 }
 
 html{
@@ -63,7 +64,7 @@ body {
 
 select {
     font-family: var(--main-font-family);
-    background: rgba(255,255,255,0.25);
+    background: var(--select-background-color);
     border: none;
     color: var(--main-text-color);
     font-size: 16px;
