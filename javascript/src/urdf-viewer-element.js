@@ -194,6 +194,7 @@ export default class URDFViewer extends HTMLElement {
             acc[name] = {};
             return acc;
         }, {});
+        this.collisionColor = 0xffbe38;
 
         // Scene setup
         const scene = new THREE.Scene();
@@ -709,7 +710,9 @@ export default class URDFViewer extends HTMLElement {
         } else {
             this.robots[robot].traverse((c) => {
                 if (c.isMesh) {
-                    if (c.material.color) {
+                    if (c.parent.isURDFCollider) {
+                        c.material.color = new THREE.Color(this.collisionColor);
+                    } else if (c.material.color) {
                         c.material.color = new THREE.Color(
                             this.robotColors[robot][c.material.uuid],
                         );
@@ -1064,7 +1067,6 @@ export default class URDFViewer extends HTMLElement {
 
     _updateCollisionVisibility() {
         const showCollision = this.showCollision;
-        const collisionMaterial = this._collisionMaterial;
         const colliders = [];
 
         for (const robot in this.robots) {
@@ -1082,7 +1084,16 @@ export default class URDFViewer extends HTMLElement {
                 coll.traverse((c) => {
                     if (c.isMesh) {
                         c.raycast = emptyRaycast;
-                        c.material = collisionMaterial;
+                        c.material = new MeshPhongMaterial({
+                            transparent: true,
+                            opacity: 0.35,
+                            shininess: 2.5,
+                            premultipliedAlpha: true,
+                            color: this.collisionColor,
+                            polygonOffset: true,
+                            polygonOffsetFactor: -1,
+                            polygonOffsetUnits: -1,
+                        });
                         c.castShadow = false;
                     }
                 });
