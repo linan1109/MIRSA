@@ -1,6 +1,6 @@
 # urdf-loaders-anymal
 
-[**Demo Here!**](https://linan1109.github.io/urdf-loaders/js)
+[**Demo Here!**](https://linan1109.github.io/MIRSA/js)
 
 [Demo Data 1](https://polybox.ethz.ch/index.php/s/jzQ74sZBg6naJXJ) 
 [Demo Data 2](https://polybox.ethz.ch/index.php/s/dds5KzUgOmimoDf) 
