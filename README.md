@@ -16,10 +16,10 @@ To test the platform, you can use the following demo data files:
 - [Demo Data 3](https://polybox.ethz.ch/index.php/s/RI8jhgs1tqHhGer) 
 - [Demo Data 4](https://polybox.ethz.ch/index.php/s/BdIbPNGqgGXrXyH)
 
-
-This project is built based on [urdf-loaders](https://github.com/gkjohnson/urdf-loaders). And the URDF model of ANYmal is from RaiSim's [anymal](https://github.com/raisimTech/raisimLib/tree/master/rsc/anymal).
-
-We gratefully acknowledge the authors and contributors of these open-source projects.
+**Demo Video**
+To see the video of the introduction and usage cases, you can visit:
+- [Video with subtitles](https://drive.google.com/file/d/15I4hIdpsVYZbwlWjA39Z_J687PKG5mDj/view?usp=sharing )
+- [Video without subtitles](https://drive.google.com/file/d/1AnwBuILhjV-IuuQDZdxLqI0nYAu0vZDO/view?usp=drive_link )
 
 ## Installation
 
@@ -35,6 +35,10 @@ npm run start
 Then, open your browser and go to:
 http://localhost:9080/dev-bundle/index.html (or change the port as shown in your terminal).
 
+## Acknowledgement
+This project is built based on [urdf-loaders](https://github.com/gkjohnson/urdf-loaders). And the URDF model of ANYmal is from RaiSim's [anymal](https://github.com/raisimTech/raisimLib/tree/master/rsc/anymal).
+
+We gratefully acknowledge the authors and contributors of these open-source projects.
 
 ## LICENSE
 
